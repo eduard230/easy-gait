@@ -1,0 +1,50 @@
+# ─── Python ─────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+
+# ─── Date raw mari (>800MB fiecare, nu se urcă pe Git) ─────
+data/raw/
+
+# Excepție: păstrăm README-urile dataseturilor + structura folder
+!data/raw/
+!data/raw/*/
+!data/raw/**/README*.txt
+!data/raw/**/.gitkeep
+
+# ─── Rezultate procesate (INCLUSE — CSV-uri mici, utile) ───
+# data/processed/  ← NU mai excludem
+
+# ─── Streamlit / secrete ────────────────────────────────────
+.streamlit/secrets.toml
+.streamlit/credentials.toml
+
+# ─── Sistem ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── OneDrive sync markers ──────────────────────────────────
+*:Zone.Identifier
+*.tmp
+
+# ─── Arhive temporare ───────────────────────────────────────
+*.zip
+*.tar.gz
+
+# ─── IDE ────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+
+# Preview-uri PDF pentru debugging (regenerate cu PyMuPDF din docs/*.pdf)
+docs/preview/

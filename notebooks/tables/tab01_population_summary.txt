@@ -1,0 +1,12 @@
+
+PROSTH (n=30 laturi):
+  Cadență: 100.1 ± 11.7 pași/min
+  Stride: 1.215 ± 0.142 s
+  Stance: 51.7 ± 9.8 %
+  ROM ankle: 17.0 ± 16.4 °
+
+INTACT (n=29 laturi):
+  Cadență: 100.3 ± 11.3 pași/min
+  Stride: 1.212 ± 0.137 s
+  Stance: 55.5 ± 4.1 %
+  ROM ankle: 38.6 ± 11.9 °

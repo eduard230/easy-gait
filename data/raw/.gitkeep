@@ -1,0 +1,9 @@
+# Pune dataseturile aici. Vezi docs/DESIGN.md §2 pentru link-uri descărcare:
+#
+# data/raw/samala_2024/    — Samala et al. 2024, Sci Data 11:922
+#                            DOI: 10.1038/s41597-024-03677-3
+#                            Structura: S01/ S02/ ... S30/ + README_IMU.txt + README_OMC.txt
+#
+# data/raw/wassall_2025/   — Wassall 2025, DataverseNO
+#                            DOI: 10.18710/U8RGDL
+#                            Structura: P1/ P2/ ... P20/ cu fișiere CSV per trial
