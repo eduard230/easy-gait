@@ -1,0 +1,6 @@
+S05_STATIC1 --> S05_WALKING1
+                S05_WALKING2
+
+S05_STATIC2 --> S05_WALKING3
+                S05_WALKING4
+                S05_WALKING5

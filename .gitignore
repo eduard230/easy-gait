@@ -12,14 +12,9 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
-# ─── Date raw mari (>800MB fiecare, nu se urcă pe Git) ─────
-data/raw/
-
-# Excepție: păstrăm README-urile dataseturilor + structura folder
-!data/raw/
-!data/raw/*/
-!data/raw/**/README*.txt
-!data/raw/**/.gitkeep
+# ─── Date raw — stocate via Git LFS (CSV, C3D, CAL) ────────
+# Fișierele de semnale sunt tracked via LFS (.gitattributes)
+# Nu excludem data/raw/ — LFS gestionează dimensiunea
 
 # ─── Rezultate procesate (INCLUSE — CSV-uri mici, utile) ───
 # data/processed/  ← NU mai excludem

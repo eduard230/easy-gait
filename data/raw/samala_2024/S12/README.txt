@@ -1,0 +1,6 @@
+S12_STATIC1 --> S12_WALKING1
+                S12_WALKING2
+
+S12_STATIC2 --> S12_WALKING3
+                S12_WALKING4
+                S12_WALKING5
