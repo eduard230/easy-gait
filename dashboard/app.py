@@ -1,4 +1,4 @@
-"""easy-gait dashboard — Streamlit entry point.
+"""Platformă pentru analiza mersului — punct de intrare Streamlit.
 
 Rulează:
     streamlit run dashboard/app.py
@@ -8,84 +8,71 @@ from pathlib import Path
 import streamlit as st
 
 st.set_page_config(
-    page_title="easy-gait — Platforma analiza mers IMU",
-    page_icon="🦿",
+    page_title="Platformă pentru analiza mersului",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.title("🦿 easy-gait")
-st.markdown(
-    """
-    **Platformă software pentru analiza ciclului de mers IMU și control adaptiv al gleznei**
+DASHBOARD = Path(__file__).parent
+PAGES_DIR = DASHBOARD / "pages"
 
-    Dizertație, Raluca Andreea PĂUN — UPB, Facultatea de Inginerie Medicală,
-    masterat *Tehnologii Moderne pentru Inginerie Medicală*. Coordonator: Conf. dr.ing.
-    Mădălin-Corneliu FRUNZETE. Sesiune: ianuarie 2026.
 
-    ---
-    """
-)
-
-col1, col2 = st.columns(2)
-with col1:
-    st.subheader("📊 Dataseturi")
+def home():
+    st.title("Platformă pentru analiza mersului")
     st.markdown(
-        """
-        - **Samala 2024** — 30 purtători proteză transtibială, IMU Noraxon @ 200 Hz + motion capture
-          (Sci Data 11:922).
-        - **Wassall NTNU 2025** — 20 utilizatori proteză membru inferior, IMU Xsens @ 100 Hz pe
-          teren real (flat, scări, pante, gravel, uneven; DOI: 10.18710/U8RGDL).
-        """
+        "Analiza ciclului de mers din semnale IMU și simularea unui control de gleznă "
+        "protetică, pe două seturi de date publice."
     )
-
-with col2:
-    st.subheader("🔬 Algoritmi")
-    st.markdown(
-        """
-        - **HS/TO**: Trojaniello-Salarian (offline) + Maqbool R-GEDS (real-time).
-        - **FSM gleznă**: 5 stări (Loading / Mid-Stance / Push-Off / Early Swing / Late Swing),
-          setpoint-uri din literatura Au 2008, Sup 2008, Bartlett 2021.
-        - **Validare**: MAE/F1 evenimente, RMSE/NRMSE/PCC traiectorie unghi gleznă.
-        """
-    )
-
-st.divider()
-
-st.subheader("Navigare")
-st.markdown(
-    """
-    Folosește meniul din stânga pentru a accesa paginile:
-
-    1. **📊 Signal Explorer** — încarcă un trial Samala/Wassall și vizualizează semnalele brute și filtrate.
-    2. **👣 Gait Events** — detectează HS/TO cu Trojaniello sau Maqbool, vezi cicluri segmentate.
-    3. **📈 Parameters** — parametri temporali ai mersului per subiect și trial.
-    4. **🦿 FSM Simulator** — rulează FSM-ul de control al gleznei și compară cu unghi real.
-    5. **🔬 Activity Compare** — comparație inter-activități (Wassall: flat vs. scări vs. pante).
-    """
-)
-
-# Detectează automat locația datelor
-root = Path(__file__).parent.parent
-data_dir = root / "data" / "raw"
-samala_dir = data_dir / "samala_2024"
-wassall_dir = data_dir / "wassall_2025"
-
-with st.sidebar:
-    st.markdown("### Stare date")
-    if samala_dir.exists():
-        n_samala = len([d for d in samala_dir.iterdir() if d.is_dir() and d.name.startswith("S")])
-        st.success(f"Samala 2024: {n_samala} subiecți disponibili")
-    else:
-        st.error("Samala 2024 lipsește. Vezi `docs/DATASET_NOTES.md`.")
-    if wassall_dir.exists():
-        n_wass = len([d for d in wassall_dir.iterdir() if d.is_dir() and d.name.startswith("P")])
-        st.success(f"Wassall 2025: {n_wass} participanți disponibili")
-    else:
-        st.error("Wassall 2025 lipsește. Vezi `docs/DATASET_NOTES.md`.")
 
     st.divider()
-    st.caption(
-        "Acest dashboard nu necesită conexiune internet după instalare. "
-        "Toate algoritmii rulează local."
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Seturi de date")
+        st.markdown(
+            """
+            - **Samala 2024** — 30 purtători de proteză transtibială, IMU la 200 Hz și
+              motion capture sincronizat, cinci probe de mers pe plat.
+            - **Wassall 2025** — 20 de participanți, IMU la 100 Hz pe teren variat:
+              plat, scări, pante, iarbă, pietriș, suprafață denivelată.
+            """
+        )
+
+    with col2:
+        st.subheader("Metode")
+        st.markdown(
+            """
+            - **Evenimente HS/TO** — Trojaniello (offline) și Maqbool (timp real).
+            - **Control gleznă** — automat cu 5 stări (FSM), cu praguri din literatură.
+            - **Validare** — eroare și corelație față de unghiul măsurat optic.
+            """
+        )
+
+    st.divider()
+
+    st.subheader("Pagini")
+    st.markdown(
+        """
+        - **Explorare semnale** — semnalele brute și filtrate pentru o probă.
+        - **Detecție evenimente** — contactul și desprinderea piciorului, ciclurile rezultate.
+        - **Parametri temporali** — cadență, durată de pas, procent de sprijin pe subiect.
+        - **Simulator FSM** — unghiul de gleznă comandat față de cel real.
+        - **Comparație activități** — diferențele între tipuri de teren (Wassall).
+        - **Simulator proteză** — animație a protezei sincronizată cu controlul.
+        """
     )
+
+
+# Meniul de navigare cu titluri în română (cu diacritice).
+pages = [
+    st.Page(home, title="Acasă", default=True),
+    st.Page(str(PAGES_DIR / "1_Explorare_semnale.py"), title="Explorare semnale"),
+    st.Page(str(PAGES_DIR / "2_Detectie_evenimente.py"), title="Detecție evenimente"),
+    st.Page(str(PAGES_DIR / "3_Parametri_temporali.py"), title="Parametri temporali"),
+    st.Page(str(PAGES_DIR / "4_Simulator_FSM.py"), title="Simulator FSM"),
+    st.Page(str(PAGES_DIR / "5_Comparatie_activitati.py"), title="Comparație activități"),
+    st.Page(str(PAGES_DIR / "6_Simulator_proteza.py"), title="Simulator proteză"),
+]
+
+pg = st.navigation(pages)
+pg.run()

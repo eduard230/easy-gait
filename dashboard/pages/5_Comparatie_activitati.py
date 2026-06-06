@@ -16,12 +16,10 @@ from easy_gait.io_utils import (
     list_wassall_trials, WASSALL_TERRAIN_LABELS,
 )
 
-header("Activity Compare — Wassall 2025", icon="🔬")
-
-st.markdown(
-    "Compară parametrii mersului între activități (plat, scări, pante, gravel, uneven) "
-    "pentru un participant sau pentru întregul lot. Folosește IMU pe shank protetic (PS) "
-    "și algoritmul Trojaniello cu praguri scalate pentru picior protetic."
+header("Comparație activități")
+st.caption(
+    "Cum se schimbă parametrii mersului în funcție de teren — plat, scări, pante, iarbă, "
+    "pietriș, suprafață denivelată — pentru un participant sau pentru întregul lot Wassall."
 )
 
 participants = list_wassall_participants_cached()
@@ -43,10 +41,10 @@ def process_wassall_trial(path: str) -> dict | None:
         return None
     d = p.to_dict()
     terrain_code = meta["terrain"]
-    # Map terrain code → label (FL=flat, ST=stair, SL=slope, GR=grass, GV=gravel, UN=uneven)
+    # Cod teren → etichetă în română.
     terrain_map = {
-        "FL": "flat", "ST": "stair", "SL": "slope",
-        "GR": "grass", "GV": "gravel", "UN": "uneven",
+        "FL": "plat", "ST": "scări", "SL": "pantă",
+        "GR": "iarbă", "GV": "pietriș", "UN": "denivelat",
     }
     d.update({
         "participant": meta["path"].split("\\")[-2].split("/")[-1],
@@ -57,13 +55,20 @@ def process_wassall_trial(path: str) -> dict | None:
     return d
 
 
+LBL = {
+    "terrain": "Teren", "walkaid": "Mijloc de sprijin",
+    "cadence [steps/min]": "Cadență (pași/min)",
+    "stance mean [%]": "Sprijin (%)",
+    "stride mean [s]": "Durată pas (s)",
+}
+
 if mode == "Un participant":
     participant = st.selectbox("Participant", participants)
     trials_df = list_wassall_trials(WASSALL_DIR, participant, sensor="PS")
     if trials_df.empty:
-        st.warning(f"Niciun trial PS pentru {participant}.")
+        st.warning(f"Nicio probă pentru {participant}.")
         st.stop()
-    st.caption(f"Procesare {len(trials_df)} trial-uri PS pentru {participant}…")
+    st.caption(f"Se procesează {len(trials_df)} probe pentru {participant}…")
     rows = []
     prog = st.progress(0)
     for i, path in enumerate(trials_df["path"]):
@@ -78,15 +83,15 @@ if mode == "Un participant":
     st.dataframe(df_res, use_container_width=True)
 
     fig = px.box(df_res, x="terrain", y="cadence [steps/min]", color="walkaid",
-                  title=f"Cadența pe activitate — {participant}")
+                  title=f"Cadență pe teren — {participant}", labels=LBL)
     st.plotly_chart(fig, use_container_width=True)
 
     fig2 = px.box(df_res, x="terrain", y="stance mean [%]", color="walkaid",
-                   title="% Stance pe activitate")
+                   title="Procent de sprijin pe teren", labels=LBL)
     st.plotly_chart(fig2, use_container_width=True)
 
     fig3 = px.box(df_res, x="terrain", y="stride mean [s]", color="walkaid",
-                   title="Durată stride pe activitate")
+                   title="Durata pasului pe teren", labels=LBL)
     st.plotly_chart(fig3, use_container_width=True)
 
 else:
@@ -105,16 +110,17 @@ else:
 
     if not df_all.empty:
         # Sumar per teren
-        agg = df_all.groupby("terrain").agg(
-            n_trials=("cadence [steps/min]", "count"),
-            cadence_mean=("cadence [steps/min]", "mean"),
-            stride_mean=("stride mean [s]", "mean"),
-            stance_mean=("stance mean [%]", "mean"),
-            stance_std=("stance mean [%]", "std"),
-        ).round(2)
+        agg = df_all.groupby("terrain").agg(**{
+            "probe": ("cadence [steps/min]", "count"),
+            "cadență medie (pași/min)": ("cadence [steps/min]", "mean"),
+            "durată pas medie (s)": ("stride mean [s]", "mean"),
+            "sprijin mediu (%)": ("stance mean [%]", "mean"),
+            "sprijin abatere (%)": ("stance mean [%]", "std"),
+        }).round(2)
+        agg.index.name = "teren"
         st.subheader("Sumar pe teren (peste toți participanții)")
         st.dataframe(agg, use_container_width=True)
 
         fig = px.box(df_all, x="terrain", y="cadence [steps/min]", color="walkaid",
-                      title="Cadență pe activitate — lot complet")
+                      title="Cadență pe teren — lot complet", labels=LBL)
         st.plotly_chart(fig, use_container_width=True)

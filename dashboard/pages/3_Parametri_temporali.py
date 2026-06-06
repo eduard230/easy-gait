@@ -17,14 +17,35 @@ from easy_gait.io_utils import (
     detect_prosthetic_side,
 )
 
-header("Parametri temporali ai mersului", icon="📈")
-
-st.markdown(
-    "Procesează toate cele 5 trial-uri ale unui subiect (sau ale tuturor subiecților) și "
-    "raportează parametrii pe ambele picioare."
+header("Parametri temporali")
+st.caption(
+    "Cadență, durată de pas și procent de sprijin, calculate pe cele cinci probe ale "
+    "unui subiect sau pe întregul lot, separat pentru piciorul intact și cel protetic."
 )
 
-mode = st.radio("Mod", ["Un subiect", "Toți subiecții (toate trial-urile)"], horizontal=True)
+mode = st.radio("Mod", ["Un subiect", "Toți subiecții"], horizontal=True)
+
+# Etichete pentru afișare (cheile interne rămân neschimbate, ca să nu afectăm logica).
+COL_RO = {
+    "subject": "subiect",
+    "trial": "proba",
+    "side": "picior",
+    "role": "rol",
+    "n_cycles": "cicluri",
+    "cadence [steps/min]": "cadență [pași/min]",
+    "stride mean [s]": "durată pas medie [s]",
+    "stride std [s]": "durată pas abatere [s]",
+    "stride CV [%]": "variabilitate pas [%]",
+    "stance mean [%]": "sprijin mediu [%]",
+    "stance std [%]": "sprijin abatere [%]",
+    "swing mean [%]": "balans mediu [%]",
+    "swing std [%]": "balans abatere [%]",
+    "duration [s]": "durată totală [s]",
+}
+
+
+def afiseaza(df_in: pd.DataFrame):
+    st.dataframe(df_in.rename(columns=COL_RO), use_container_width=True)
 
 
 def process_trial(subject: str, trial: int) -> list[dict]:
@@ -40,8 +61,8 @@ def process_trial(subject: str, trial: int) -> list[dict]:
         p = parameters.compute_gait_params(cycles)
         d = p.to_dict()
         d.update({
-            "subject": subject, "trial": f"W{trial}", "side": side,
-            "role": "PROTETIC" if is_prost else "INTACT",
+            "subject": subject, "trial": f"P{trial}", "side": side,
+            "role": "protetic" if is_prost else "intact",
         })
         rows.append(d)
     return rows
@@ -57,18 +78,19 @@ if mode == "Un subiect":
         except FileNotFoundError:
             continue
     if not rows:
-        st.warning("Niciun trial procesabil pentru acest subiect.")
+        st.warning("Nicio probă procesabilă pentru acest subiect.")
         st.stop()
     df_params = pd.DataFrame(rows)
-    st.dataframe(df_params, use_container_width=True)
+    afiseaza(df_params)
 
-    # Grafic cadence per trial
     fig = px.bar(df_params, x="trial", y="cadence [steps/min]", color="role", barmode="group",
-                  title=f"Cadența — {subject}")
+                  title=f"Cadență — {subject}",
+                  labels={"trial": "Proba", "cadence [steps/min]": "Cadență (pași/min)", "role": "Picior"})
     st.plotly_chart(fig, use_container_width=True)
 
     fig2 = px.bar(df_params, x="trial", y="stance mean [%]", color="role", barmode="group",
-                   title="% Stance")
+                   title="Procent de sprijin",
+                   labels={"trial": "Proba", "stance mean [%]": "Sprijin (%)", "role": "Picior"})
     st.plotly_chart(fig2, use_container_width=True)
 
 else:
@@ -84,20 +106,22 @@ else:
                 continue
         prog.progress((i + 1) / n_max)
     df_all = pd.DataFrame(rows)
-    st.dataframe(df_all, use_container_width=True)
+    afiseaza(df_all)
 
-    # Cadență media per subiect și rol
+    # Cadență medie per subiect și rol
     if not df_all.empty:
         agg = df_all.groupby(["subject", "role"])["cadence [steps/min]"].mean().reset_index()
         fig = px.bar(agg, x="subject", y="cadence [steps/min]", color="role", barmode="group",
-                      title="Cadență medie per subiect")
+                      title="Cadență medie per subiect",
+                      labels={"subject": "Subiect", "cadence [steps/min]": "Cadență (pași/min)", "role": "Picior"})
         st.plotly_chart(fig, use_container_width=True)
 
-        agg2 = df_all.groupby("role").agg(
-            cadence_mean=("cadence [steps/min]", "mean"),
-            stride_mean=("stride mean [s]", "mean"),
-            stance_mean=("stance mean [%]", "mean"),
-            swing_mean=("swing mean [%]", "mean"),
-        ).round(2)
-        st.subheader("Sumar PROTETIC vs. INTACT")
+        agg2 = df_all.groupby("role").agg(**{
+            "cadență [pași/min]": ("cadence [steps/min]", "mean"),
+            "durată pas medie [s]": ("stride mean [s]", "mean"),
+            "sprijin mediu [%]": ("stance mean [%]", "mean"),
+            "balans mediu [%]": ("swing mean [%]", "mean"),
+        }).round(2)
+        agg2.index.name = "rol"
+        st.subheader("Sumar: picior protetic vs. intact")
         st.dataframe(agg2, use_container_width=True)

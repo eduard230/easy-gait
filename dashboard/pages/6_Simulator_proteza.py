@@ -18,26 +18,21 @@ from easy_gait.io_utils import (
 )
 from easy_gait.prosthesis_viz import build_animation_figure, build_legend_figure, FSM_COLORS
 
-header("Prosthesis Simulator — Animație gleznă protetică", icon="🎬")
-
-st.markdown(
-    """
-    Vizualizare animată 2D (vedere sagitală — laterală) a unei proteze transtibiale
-    care urmărește traiectoria de control generată de FSM. Talpa își schimbă culoarea
-    în funcție de starea curentă a FSM-ului. Folosește butonul **Play** sau scrubbing-ul
-    cu slider-ul de jos pentru a controla animația.
-    """
+header("Simulator proteză")
+st.caption(
+    "Animație laterală a protezei care urmează unghiul de gleznă comandat de control. "
+    "Culoarea tălpii arată faza curentă a pasului. Pornește cu Play sau derulează manual."
 )
 
 # Controale
 c1, c2, c3, c4 = st.columns(4)
 subjects = list_samala_subjects_cached()
 subject = c1.selectbox("Subiect", subjects, key="anim_subject")
-trial = c2.selectbox("Trial", [1, 2, 3, 4, 5], key="anim_trial")
+trial = c2.selectbox("Proba", [1, 2, 3, 4, 5], key="anim_trial")
 activity = c3.selectbox("Activitate", list(fsm.SETPOINTS.keys()), key="anim_activity")
 viz_mode = c4.selectbox(
-    "Sursa unghi gleznă",
-    ["Traiectorie FSM (comandată)", "Unghi real (din IMU joint)"],
+    "Sursa unghiului de gleznă",
+    ["Unghi comandat (control)", "Unghi real (măsurat)"],
     key="anim_mode",
 )
 
@@ -48,7 +43,7 @@ intact = "right" if prost == "left" else "left"
 
 side = st.radio(
     "Picior simulat", [prost, intact],
-    format_func=lambda s: f"{s.upper()} ({'PROTETIC' if s == prost else 'INTACT'})",
+    format_func=lambda s: f"{s.upper()} ({'protetic' if s == prost else 'intact'})",
     horizontal=True, key="anim_side",
 )
 is_prost = (side == prost)
@@ -69,12 +64,12 @@ trace = fsm.run_fsm(
 ankle_fsm = ankle_controller.generate_trajectory(trace, fs=fs)
 
 # Selectare sursă unghi pentru animație
-if viz_mode == "Traiectorie FSM (comandată)":
+if viz_mode == "Unghi comandat (control)":
     ankle_to_animate = ankle_fsm
-    src_label = "FSM"
+    src_label = "comandat"
 else:
     ankle_to_animate = ankle_real
-    src_label = "IMU real"
+    src_label = "măsurat"
 
 # Decupare la primele 6 secunde pentru fluiditate (animație 60 fps = 360 cadre)
 window_s = st.slider("Fereastra de animație (s)", 2.0, min(15.0, len(df) / fs), 6.0, step=0.5)
@@ -103,9 +98,9 @@ ang_w = ankle_to_animate[i0:i1]
 fsm_w = trace.state_per_sample[i0:i1]
 
 st.caption(
-    f"Subiect **{subject}** | Trial **W{trial}** | Picior **{side.upper()}** "
-    f"({'PROTETIC' if is_prost else 'INTACT'}) | Activitate **{activity}** | "
-    f"Sursa unghi: **{src_label}** | Fereastra: {start_s:.1f}-{start_s+window_s:.1f} s"
+    f"Subiect **{subject}** · proba **{trial}** · picior **{side.upper()}** "
+    f"({'protetic' if is_prost else 'intact'}) · activitate **{activity}** · "
+    f"unghi **{src_label}** · fereastră {start_s:.1f}–{start_s+window_s:.1f} s"
 )
 
 # Două coloane: animație + graficul sincronizat
@@ -121,14 +116,14 @@ with left:
     st.plotly_chart(build_legend_figure(), use_container_width=True)
 
 with right:
-    st.markdown("#### Semnal unghi gleznă + stare FSM (sincron)")
+    st.markdown("#### Unghiul gleznei și faza pasului (sincron)")
     fig = make_subplots(
         rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.05,
         row_heights=[0.7, 0.3],
-        subplot_titles=("Unghi gleznă (dorsi +, plantar −)", "Stare FSM"),
+        subplot_titles=("Unghi gleznă (dorsiflexie +, plantarflexie −)", "Faza pasului"),
     )
     fig.add_trace(go.Scatter(
-        x=times_w, y=ang_w, name=f"Unghi ({src_label})",
+        x=times_w, y=ang_w, name=f"unghi {src_label}",
         line=dict(color="darkorange", width=2),
     ), row=1, col=1)
     # Marcaje HS/TO în fereastră
@@ -139,16 +134,16 @@ with right:
     for t in to_in:
         fig.add_vline(x=t, line=dict(color="blue", width=1, dash="dot"), row=1, col=1)
 
-    # Stare FSM colorată
+    # Faza pasului, colorată
     fig.add_trace(go.Scatter(
         x=times_w, y=fsm_w, mode="lines",
-        line=dict(color="purple", shape="hv", width=2), name="Stare FSM",
+        line=dict(color="purple", shape="hv", width=2), name="faza pasului",
     ), row=2, col=1)
 
     fig.update_yaxes(title="Unghi (°)", row=1, col=1)
     fig.update_yaxes(
-        title="Stare", row=2, col=1, tickmode="array",
-        tickvals=[1, 2, 3, 4, 5], ticktext=["S1", "S2", "S3", "S4", "S5"],
+        title="Fază", row=2, col=1, tickmode="array",
+        tickvals=[1, 2, 3, 4, 5], ticktext=["1", "2", "3", "4", "5"],
     )
     fig.update_xaxes(title="Timp (s)", row=2, col=1)
     fig.update_layout(height=480, template="plotly_white", showlegend=True,
@@ -159,23 +154,18 @@ with right:
 st.divider()
 st.markdown(
     """
-    **Cum citești animația (model fiziologic "ground-pivot rockers", Perry & Burnfield):**
-    - **Tibia** — pilonul protezei; se înclină peste piciorul stabil în stance.
-    - **Glezna** (cerc alb) — joint-ul rotativ; se ridică/translatează automat
-      astfel încât piciorul să rămână mereu deasupra solului (nu intră în pământ).
-    - **Talpa** (poligon colorat) — culoarea indică starea curentă a FSM.
-    - **Genunchi** (cerc gri mare, sus) — punctul de prindere proximal (informativ).
-    - Linia gri orizontală = nivelul solului.
+    **Repere în desen.** Pilonul vertical este gamba,
+    cercul alb de la bază este glezna, iar poligonul colorat este talpa; cercul gri de
+    sus marchează genunchiul. Glezna se ridică sau coboară astfel încât talpa să rămână
+    pe sol pe tot parcursul sprijinului.
 
-    **Cele trei rockers în stance — pivotul de contact se schimbă pe parcursul pasului:**
-    1. **S1 Loading Response** (albastru) — *heel rocker*: călcâiul e pe sol, tibia se rotește înainte peste călcâi.
-    2. **S2 Mid-Stance** (verde) — *ankle rocker*: talpa e plată pe sol, tibia se înclină înainte
-       peste glezna stabilă.
-    3. **S3 Push-Off** (roșu) — *forefoot rocker*: vârful e pe sol, călcâiul urcă;
-       glezna face plantarflexie activă.
-    4. **S4 Early Swing** (portocaliu) — piciorul tocmai s-a desprins, urcă pentru *toe clearance*.
-    5. **S5 Late Swing** (violet) — gamba se balansează înainte, vârful coboară spre următorul HS.
+    **Fazele pasului**, în ordinea în care apar (culoarea tălpii urmează aceeași codare
+    ca în grafic):
 
-    Acest model garantează că talpa **nu intră niciodată în sol** — exact ca în mersul real.
+    - **Contact inițial** — călcâiul atinge solul, gamba începe să se rotească peste el.
+    - **Sprijin median** — talpa e plată, greutatea trece peste gleznă, gamba înclină înainte.
+    - **Desprindere** — călcâiul se ridică, glezna împinge din vârf înainte de a părăsi solul.
+    - **Început de balans** — piciorul s-a desprins și se ridică pentru a evita atingerea solului.
+    - **Sfârșit de balans** — gamba se duce înainte, vârful coboară spre următorul contact.
     """
 )

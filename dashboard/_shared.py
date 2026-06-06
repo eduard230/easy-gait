@@ -35,6 +35,11 @@ def load_wassall_trial_cached(path: str):
     return g.df, g.fs, g.meta
 
 
-def header(title: str, icon: str = "📊"):
-    st.set_page_config(page_title=f"easy-gait — {title}", page_icon=icon, layout="wide")
-    st.title(f"{icon} {title}")
+def header(title: str, icon: str | None = None):
+    # set_page_config se apelează o singură dată în app.py (router st.navigation);
+    # un al doilea apel din pagină ar arunca eroare, deci îl ignorăm.
+    try:
+        st.set_page_config(page_title=title, layout="wide")
+    except st.errors.StreamlitAPIException:
+        pass
+    st.title(title)

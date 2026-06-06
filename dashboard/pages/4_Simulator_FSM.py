@@ -17,18 +17,16 @@ from easy_gait.io_utils import (
     accel_magnitude, detect_prosthetic_side, compute_ankle_angle,
 )
 
-header("FSM Simulator — Control gleznă protetică", icon="🦿")
-
-st.markdown(
-    "Rulează FSM cu 5 stări (Loading → Mid-Stance → Push-Off → Early Swing → Late Swing), "
-    "generează traiectoria de referință pentru unghi gleznă și compară cu unghiul real "
-    "măsurat (din IMU Noraxon-Joints-Ankle)."
+header("Simulator FSM")
+st.caption(
+    "Controlul de gleznă cu cinci stări generează un unghi de referință de-a lungul "
+    "pasului. Graficele compară acest unghi comandat cu cel măsurat pe subiect."
 )
 
 subjects = list_samala_subjects_cached()
 c1, c2, c3, c4 = st.columns(4)
 subject = c1.selectbox("Subiect", subjects)
-trial = c2.selectbox("Trial", [1, 2, 3, 4, 5])
+trial = c2.selectbox("Proba", [1, 2, 3, 4, 5])
 activity = c3.selectbox("Activitate", list(fsm.SETPOINTS.keys()), index=0)
 method = c4.selectbox("Detecție evenimente", ["Trojaniello", "Maqbool"])
 
@@ -37,7 +35,7 @@ prost = detect_prosthetic_side(df)
 intact = "right" if prost == "left" else "left"
 
 side = st.radio("Picior simulat", [intact, prost], horizontal=True,
-                  format_func=lambda s: f"{s.upper()} ({'INTACT' if s == intact else 'PROTETIC'})")
+                  format_func=lambda s: f"{s.upper()} ({'intact' if s == intact else 'protetic'})")
 is_prost = (side == prost)
 
 pitch_col = SAMALA_SHANK_GYRO_COLS[side]["pitch"]
@@ -74,32 +72,38 @@ m4.metric("Cicluri", len(segmentation.reject_outliers(segmentation.build_cycles(
 
 fig = make_subplots(
     rows=3, cols=1, shared_xaxes=True,
-    subplot_titles=("FSM state per sample", "Setpoint discret și traiectorie continuă",
-                    "Comparație unghi gleznă: traiectorie generată vs. unghi real (IMU joint)"),
+    subplot_titles=("Faza controlului în timp",
+                    "Unghi de referință: țintă pe faze și traiectorie netezită",
+                    "Unghi de gleznă: comandat față de cel real"),
     row_heights=[0.2, 0.4, 0.4],
 )
 fig.add_trace(go.Scatter(x=t, y=trace.state_per_sample, line=dict(color="purple", shape="hv"),
-                          name="State"), row=1, col=1)
+                          name="fază"), row=1, col=1)
 fig.update_yaxes(tickmode="array", tickvals=[1, 2, 3, 4, 5],
-                  ticktext=["S1", "S2", "S3", "S4", "S5"], row=1, col=1)
+                  ticktext=["1", "2", "3", "4", "5"], row=1, col=1)
 
-fig.add_trace(go.Scatter(x=t, y=trace.setpoint_per_sample, name="Setpoint",
+fig.add_trace(go.Scatter(x=t, y=trace.setpoint_per_sample, name="țintă pe faze",
                           line=dict(color="gray", dash="dash", shape="hv")), row=2, col=1)
-fig.add_trace(go.Scatter(x=t, y=traj, name="Traiectorie FSM (spline)",
+fig.add_trace(go.Scatter(x=t, y=traj, name="traiectorie netezită",
                           line=dict(color="darkorange", width=2)), row=2, col=1)
 
-fig.add_trace(go.Scatter(x=t, y=ankle_real, name="Unghi gleznă real (IMU joint)",
+fig.add_trace(go.Scatter(x=t, y=ankle_real, name="unghi real (măsurat)",
                           line=dict(color="green", width=2)), row=3, col=1)
-fig.add_trace(go.Scatter(x=t, y=traj, name="Traiectorie FSM",
+fig.add_trace(go.Scatter(x=t, y=traj, name="unghi comandat",
                           line=dict(color="darkorange", dash="dot", width=1.5)), row=3, col=1)
 
 fig.update_layout(height=750, showlegend=True,
-                   yaxis2_title="Unghi (°)", yaxis3_title="Unghi (°)",
+                   yaxis_title="Fază", yaxis2_title="Unghi (°)", yaxis3_title="Unghi (°)",
                    xaxis3_title="Timp (s)")
 st.plotly_chart(fig, use_container_width=True)
 
-# Setpoint table
-st.subheader("Setpoint-uri FSM curente (deg)")
+st.caption(
+    "Faze: 1 — contact inițial, 2 — sprijin median, 3 — desprindere, "
+    "4 — început de balans, 5 — sfârșit de balans."
+)
+
+# Tabel unghiuri-țintă
+st.subheader("Unghiuri-țintă pe faze (grade)")
 import pandas as pd
 sp_df = pd.DataFrame({s.name: [round(v, 1)] for s, v in fsm.SETPOINTS[activity].items()})
 sp_df.index = [f"activitate: {activity}"]

@@ -65,11 +65,11 @@ _STANCE_STATES = {1, 2, 3}
 
 FSM_COLORS = {1: "#1f77b4", 2: "#2ca02c", 3: "#d62728", 4: "#ff7f0e", 5: "#9467bd"}
 FSM_NAMES = {
-    1: "S1 Loading Response",
-    2: "S2 Mid-Stance",
-    3: "S3 Push-Off",
-    4: "S4 Early Swing",
-    5: "S5 Late Swing",
+    1: "Contact inițial",
+    2: "Sprijin median",
+    3: "Desprindere",
+    4: "Început de balans",
+    5: "Sfârșit de balans",
 }
 
 

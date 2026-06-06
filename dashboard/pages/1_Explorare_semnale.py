@@ -18,31 +18,39 @@ from easy_gait.io_utils import (
     detect_prosthetic_side, list_wassall_trials, WASSALL_GYRO_COLS, WASSALL_ACCEL_COLS,
 )
 
-header("Signal Explorer", icon="📊")
+header("Explorare semnale")
+st.caption(
+    "Semnalele IMU brute și după filtrare pentru o probă aleasă: viteza unghiulară a "
+    "gambei, accelerațiile și unghiul de gleznă."
+)
 
-dataset = st.sidebar.radio("Dataset", ["Samala 2024", "Wassall 2025"], index=0)
+dataset = st.radio("Set de date", ["Samala 2024", "Wassall 2025"], horizontal=True, index=0)
 
 if dataset == "Samala 2024":
     subjects = list_samala_subjects_cached()
     if not subjects:
         st.error("Niciun subiect Samala găsit. Verifică `data/raw/samala_2024/`.")
         st.stop()
-    subject = st.sidebar.selectbox("Subiect", subjects, index=0)
-    trial = st.sidebar.selectbox("Trial", [1, 2, 3, 4, 5], index=0)
+
+    c1, c2, c3, c4 = st.columns([2, 1, 1.5, 1.5])
+    subject = c1.selectbox(f"Subiect (1–{len(subjects)})", subjects, index=0)
+    trial = c2.selectbox("Proba", [1, 2, 3, 4, 5], index=0)
 
     df, fs, meta = load_samala_imu_cached(subject, trial)
     prost_side = detect_prosthetic_side(df)
     intact_side = "right" if prost_side == "left" else "left"
 
-    st.caption(
-        f"Subiect **{subject}** trial **Walking{trial}** | "
-        f"fs = {fs} Hz | durata = {meta['duration_s']:.2f} s | "
-        f"partea protetică detectată: **{prost_side.upper()}** (ROM scăzut)"
+    side = c3.radio(
+        "Picior afișat", [intact_side, prost_side],
+        format_func=lambda s: f"{s.upper()} ({'intact' if s == intact_side else 'protetic'})",
     )
+    cutoff = c4.slider("Frecvență de tăiere filtru (Hz)", 5, 50, 15)
 
-    side = st.sidebar.radio("Picior afișat", [intact_side, prost_side],
-                             format_func=lambda s: f"{s.upper()} ({'INTACT' if s == intact_side else 'PROTETIC'})")
-    cutoff = st.sidebar.slider("Cutoff filtru (Hz)", 5, 50, 15)
+    st.caption(
+        f"Subiect **{subject}** · proba **{trial}** · frecvență de eșantionare "
+        f"{fs} Hz · durată {meta['duration_s']:.2f} s · "
+        f"piciorul protetic detectat: **{prost_side.upper()}** (amplitudine redusă)"
+    )
 
     pitch_col = SAMALA_SHANK_GYRO_COLS[side]["pitch"]
     accel_cols = SAMALA_SHANK_ACCEL_COLS[side]
@@ -57,17 +65,17 @@ if dataset == "Samala 2024":
     fig_pitch.add_trace(go.Scatter(x=t, y=pitch_raw, name="brut", opacity=0.5, line=dict(color="lightgray")))
     fig_pitch.add_trace(go.Scatter(x=t, y=pitch_filt, name=f"filtrat ({cutoff} Hz)", line=dict(color="steelblue")))
     fig_pitch.update_layout(
-        title=f"Shank pitch — {side.upper()}", height=300,
+        title=f"Înclinarea gambei — {side.upper()}", height=300,
         xaxis_title="Timp (s)", yaxis_title="Unghi (°)",
     )
     st.plotly_chart(fig_pitch, use_container_width=True)
 
     fig_omega = go.Figure()
-    fig_omega.add_trace(go.Scatter(x=t, y=omega, name="ω shank pitch rate", line=dict(color="darkorange")))
+    fig_omega.add_trace(go.Scatter(x=t, y=omega, name="viteză unghiulară", line=dict(color="darkorange")))
     fig_omega.add_hline(y=0, line=dict(color="gray", dash="dot"))
     fig_omega.update_layout(
-        title="Viteza unghiulară shank (pitch rate) — utilizată pentru detecția HS/TO",
-        height=300, xaxis_title="Timp (s)", yaxis_title="ω (deg/s)",
+        title="Viteza unghiulară a gambei — baza detecției de pas",
+        height=300, xaxis_title="Timp (s)", yaxis_title="Viteză unghiulară (°/s)",
     )
     st.plotly_chart(fig_omega, use_container_width=True)
 
@@ -75,31 +83,38 @@ if dataset == "Samala 2024":
     amag = accel_magnitude(df, accel_cols)
     fig_a = go.Figure()
     for c in accel_cols:
-        fig_a.add_trace(go.Scatter(x=t, y=df[c], name=c.split(" ")[2] + "-axis", opacity=0.6))
-    fig_a.add_trace(go.Scatter(x=t, y=amag, name="‖a‖", line=dict(color="black", width=2)))
+        axa = next((p for p in c.split(" ") if p in ("X", "Y", "Z")), c)
+        fig_a.add_trace(go.Scatter(x=t, y=df[c], name="axa " + axa, opacity=0.6))
+    fig_a.add_trace(go.Scatter(x=t, y=amag, name="modul", line=dict(color="black", width=2)))
     fig_a.update_layout(
-        title=f"Acceleratii shank — {side.upper()}", height=300,
-        xaxis_title="Timp (s)", yaxis_title="Acc. (m/s²)",
+        title=f"Accelerații la nivelul gambei — {side.upper()}", height=300,
+        xaxis_title="Timp (s)", yaxis_title="Accelerație (m/s²)",
     )
     st.plotly_chart(fig_a, use_container_width=True)
 
     fig_ankle = go.Figure()
-    fig_ankle.add_trace(go.Scatter(x=t, y=df[ankle_col], name=ankle_col, line=dict(color="green")))
+    fig_ankle.add_trace(go.Scatter(x=t, y=df[ankle_col], name="unghi gleznă", line=dict(color="green")))
     fig_ankle.update_layout(
-        title=f"Unghi gleznă (dorsi +, plantar −) — {side.upper()}", height=300,
+        title=f"Unghiul gleznei (dorsiflexie +, plantarflexie −) — {side.upper()}", height=300,
         xaxis_title="Timp (s)", yaxis_title="Unghi (°)",
     )
     st.plotly_chart(fig_ankle, use_container_width=True)
 
-    st.caption(f"ROM ankle {side.upper()}: {df[ankle_col].max() - df[ankle_col].min():.1f}°")
+    st.caption(f"Amplitudine de mișcare gleznă {side.upper()}: {df[ankle_col].max() - df[ankle_col].min():.1f}°")
 
 else:  # Wassall
     participants = list_wassall_participants_cached()
     if not participants:
         st.error("Niciun participant Wassall găsit. Verifică `data/raw/wassall_2025/`.")
         st.stop()
-    participant = st.sidebar.selectbox("Participant", participants)
-    sensor = st.sidebar.selectbox("Senzor", ["PS (prosthetic shank)", "TH (thigh)", "TR (trunk)", "OS (other shank)"], index=0)
+
+    c1, c2 = st.columns([2, 2])
+    participant = c1.selectbox(f"Participant (1–{len(participants)})", participants)
+    sensor = c2.selectbox(
+        "Senzor",
+        ["PS (gambă protetică)", "TH (coapsă)", "TR (trunchi)", "OS (gambă opusă)"],
+        index=0,
+    )
     sensor_code = sensor.split(" ")[0]
 
     trials_df = list_wassall_trials(WASSALL_DIR, participant, sensor=sensor_code)
@@ -108,15 +123,16 @@ else:  # Wassall
         st.stop()
     st.dataframe(trials_df[["trial_id", "terrain", "walkaid", "trial"]].head(20), use_container_width=True)
 
-    trial_id = st.sidebar.selectbox("Trial", trials_df["trial_id"].tolist())
+    trial_id = st.selectbox("Probă", trials_df["trial_id"].tolist())
     path = trials_df.loc[trials_df["trial_id"] == trial_id, "path"].iloc[0]
     df, fs, meta = load_wassall_trial_cached(path)
-    cutoff = st.sidebar.slider("Cutoff filtru (Hz)", 5, 25, 15)
+    cutoff = st.slider("Frecvență de tăiere filtru (Hz)", 5, 25, 15)
 
     t = np.arange(len(df)) / fs
     st.caption(
-        f"{participant} — {trial_id} | fs={fs} Hz | dur={meta['duration_s']:.2f}s | "
-        f"teren={meta['terrain']} | walkaid={meta['walkaid']}"
+        f"{participant} · {trial_id} · frecvență de eșantionare {fs} Hz · "
+        f"durată {meta['duration_s']:.2f} s · teren {meta['terrain']} · "
+        f"mijloc de sprijin {meta['walkaid']}"
     )
 
     # Gyro Y (medio-lateral) e cel ml-axis pentru HS/TO detection în Wassall (vezi README)
@@ -127,22 +143,22 @@ else:  # Wassall
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=t, y=gy_dps, name="brut", opacity=0.5, line=dict(color="lightgray")))
     fig.add_trace(go.Scatter(x=t, y=gy_filt, name=f"filtrat ({cutoff} Hz)", line=dict(color="steelblue")))
-    fig.update_layout(title=f"Gyroscope Y ({sensor_code})", height=300,
-                       xaxis_title="Timp (s)", yaxis_title="ω (deg/s)")
+    fig.update_layout(title=f"Viteză unghiulară (senzor {sensor_code})", height=300,
+                       xaxis_title="Timp (s)", yaxis_title="Viteză unghiulară (°/s)")
     st.plotly_chart(fig, use_container_width=True)
 
     # Acceleratii
     fig_a = go.Figure()
     for c in WASSALL_ACCEL_COLS:
         fig_a.add_trace(go.Scatter(x=t, y=df[c], name=c, opacity=0.7))
-    fig_a.update_layout(title=f"Acceleratii ({sensor_code})", height=300,
-                         xaxis_title="Timp (s)", yaxis_title="Acc. (m/s²)")
+    fig_a.update_layout(title=f"Accelerații (senzor {sensor_code})", height=300,
+                         xaxis_title="Timp (s)", yaxis_title="Accelerație (m/s²)")
     st.plotly_chart(fig_a, use_container_width=True)
 
     # Strides & terrain labels
     fig_lbl = go.Figure()
-    fig_lbl.add_trace(go.Scatter(x=t, y=df["Steps"], name="Stride #", line=dict(color="purple")))
-    fig_lbl.add_trace(go.Scatter(x=t, y=df["Terrain"], name="Terrain label", line=dict(color="orange")))
-    fig_lbl.update_layout(title="Stride numbering și terrain label (din dataset)", height=250,
+    fig_lbl.add_trace(go.Scatter(x=t, y=df["Steps"], name="număr pas", line=dict(color="purple")))
+    fig_lbl.add_trace(go.Scatter(x=t, y=df["Terrain"], name="cod teren", line=dict(color="orange")))
+    fig_lbl.update_layout(title="Numerotarea pașilor și terenul (din setul de date)", height=250,
                            xaxis_title="Timp (s)")
     st.plotly_chart(fig_lbl, use_container_width=True)
