@@ -9,13 +9,26 @@ from plotly.subplots import make_subplots
 import streamlit as st
 
 from _shared import (
-    header, list_samala_subjects_cached, load_samala_imu_cached, SAMALA_DIR,
+    header, list_samala_subjects_cached, load_samala_imu_cached, SAMALA_DIR, ROOT,
 )
-from easy_gait import preprocessing, gait_events, segmentation, fsm, ankle_controller, validation
+from easy_gait import (
+    preprocessing, gait_events, segmentation, fsm, ankle_controller, validation,
+    gait_profile,
+)
 from easy_gait.io_utils import (
     SAMALA_SHANK_GYRO_COLS, SAMALA_SHANK_ACCEL_COLS,
     accel_magnitude, detect_prosthetic_side, compute_ankle_angle,
 )
+
+
+@st.cache_data(show_spinner=False)
+def _load_intact_band():
+    """Profilul fiziologic intact (±1SD) generat de scripts/validate_fsm_v2.py."""
+    import pandas as pd
+    p = ROOT / "data" / "processed" / "intact_ankle_profile.csv"
+    if not p.exists():
+        return None
+    return pd.read_csv(p)
 
 header("Simulator FSM")
 st.caption(
@@ -60,15 +73,44 @@ trace = fsm.run_fsm(
 traj = ankle_controller.generate_trajectory(trace, fs=fs)
 t = np.arange(len(df)) / fs
 
-# Metrice
+# ── NOU (v2): bucla de impedanță — unghiul OBSERVAT din θ_eq + M_GRF/K ──
+# Setpoint-urile FSM sunt echilibre de impedanță, nu unghiuri observate. Unghiul
+# fizic real rezultă din complianța gleznei sub momentul GRF (Sup/Goldfarb 2008).
+try:
+    from easy_gait.samala_metadata import get_meta as _samala_meta
+    weight_kg = float(_samala_meta(subject).weight_kg)
+except Exception:
+    weight_kg = 75.0
+phase_pct = ankle_controller.phase_from_states(trace.state_per_sample, events.hs_idx, len(df))
+traj_imp = ankle_controller.observed_angle_from_impedance(
+    traj, phase_pct, body_weight_n=weight_kg * 9.80665,
+    stiffness_nm_per_deg=3.0, moment_arm_m=0.06,
+)
+
+opt1, opt2 = st.columns(2)
+show_impedance = opt1.toggle(
+    "Afișează unghiul observat din impedanță (θ_eq + M·GRF/K)", value=True,
+    help="Unghiul fizic estimat al gleznei — diferit de comanda brută. Urcă în dorsiflexie pe stance (rocker).")
+show_band = opt2.toggle(
+    "Suprapune banda fiziologică intactă (±1SD)", value=True,
+    help="Profilul mediu al gleznei intacte (OMC), ca referință de formă.")
+
+# Metrice — comandă brută (v1) vs impedanță (v2)
 rmse = validation.traj_rmse(traj, ankle_real)
 nrmse = validation.traj_nrmse(traj, ankle_real)
 pcc = validation.traj_pcc(traj, ankle_real)
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("RMSE [°]", f"{rmse:.2f}", help="țintă < 5° (Bartlett 2021)")
-m2.metric("NRMSE [%]", f"{nrmse*100:.1f}", help="țintă < 15%")
-m3.metric("PCC", f"{pcc:.3f}", help="țintă > 0.90")
-m4.metric("Cicluri", len(segmentation.reject_outliers(segmentation.build_cycles(events))))
+rmse_imp = validation.traj_rmse(traj_imp, ankle_real)
+pcc_imp = validation.traj_pcc(traj_imp, ankle_real)
+m1, m2, m3, m4, m5 = st.columns(5)
+m1.metric("RMSE θ_eq [°]", f"{rmse:.2f}", help="comandă brută vs real — țintă < 5°")
+m2.metric("PCC θ_eq", f"{pcc:.3f}", help="comandă brută — poate fi negativ (impedanță)")
+m3.metric("RMSE impedanță [°]", f"{rmse_imp:.2f}",
+          delta=f"{rmse_imp - rmse:+.2f}", delta_color="inverse",
+          help="v2: unghi observat θ_eq+M·GRF/K vs real")
+m4.metric("PCC impedanță", f"{pcc_imp:.3f}",
+          delta=f"{pcc_imp - pcc:+.3f}",
+          help="v2: corelația devine pozitivă când comparăm unghiul fizic")
+m5.metric("Cicluri", len(segmentation.reject_outliers(segmentation.build_cycles(events))))
 
 fig = make_subplots(
     rows=3, cols=1, shared_xaxes=True,
@@ -89,8 +131,38 @@ fig.add_trace(go.Scatter(x=t, y=traj, name="traiectorie netezită",
 
 fig.add_trace(go.Scatter(x=t, y=ankle_real, name="unghi real (măsurat)",
                           line=dict(color="green", width=2)), row=3, col=1)
-fig.add_trace(go.Scatter(x=t, y=traj, name="unghi comandat",
+fig.add_trace(go.Scatter(x=t, y=traj, name="θ_eq comandat (impedanță)",
                           line=dict(color="darkorange", dash="dot", width=1.5)), row=3, col=1)
+
+# ── NOU (v2): curba unghiului observat din bucla de impedanță ──
+if show_impedance:
+    fig.add_trace(go.Scatter(x=t, y=traj_imp, name="θ observat (θ_eq + M·GRF/K)",
+                             line=dict(color="crimson", width=2)), row=3, col=1)
+
+# ── NOU (v2): banda fiziologică intactă ±1SD, mapată pe fiecare ciclu detectat ──
+if show_band:
+    band = _load_intact_band()
+    if band is not None and len(events.hs_idx) >= 2:
+        pct = band["pct"].to_numpy()
+        lo = (band["mean_deg"] - band["sd_deg"]).to_numpy()
+        hi = (band["mean_deg"] + band["sd_deg"]).to_numpy()
+        first = True
+        for i in range(len(events.hs_idx) - 1):
+            a, b = int(events.hs_idx[i]), int(events.hs_idx[i + 1])
+            if b - a < 4:
+                continue
+            tc = t[a:b]
+            x_cycle = np.linspace(0, 100, b - a)
+            lo_c = np.interp(x_cycle, pct, lo)
+            hi_c = np.interp(x_cycle, pct, hi)
+            fig.add_trace(go.Scatter(
+                x=np.concatenate([tc, tc[::-1]]),
+                y=np.concatenate([hi_c, lo_c[::-1]]),
+                fill="toself", fillcolor="rgba(44,160,44,0.15)",
+                line=dict(width=0), name="bandă intact ±1SD",
+                legendgroup="band", showlegend=first, hoverinfo="skip",
+            ), row=3, col=1)
+            first = False
 
 fig.update_layout(height=750, showlegend=True,
                    yaxis_title="Fază", yaxis2_title="Unghi (°)", yaxis3_title="Unghi (°)",

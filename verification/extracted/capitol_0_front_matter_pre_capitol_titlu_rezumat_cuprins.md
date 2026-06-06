@@ -1,0 +1,25 @@
+# Front matter / Pre-capitol (titlu, rezumat, cuprins)
+
+> Capitol extras automat din `Paun_Raluca_Raport_CS4-final.docx`. Fiecare AFIRMATIE este numerotata pentru verificare independenta.
+
+- **[AF-0.1 | #1]** RAPORT
+- **[AF-0.2 | #2]** CERCETARE ȘTIINȚIFICĂ 4
+- **[AF-0.3 | #3]** Sistem software pentru controlul unei proteze transtibiale active
+- **[AF-0.4 | #4]** Specializarea: Tehnologii moderne pentru inginerie medicală
+
+#### Coordonator științific:
+
+- **[AF-0.5 | #5]** Conf. dr.ing. Mădălin-Corneliu FRUNZETE
+
+#### Student masterand:
+
+- **[AF-0.6 | #6]** Raluca Andreea PĂUN
+- **[AF-0.7 | #7]** București
+- **[AF-0.8 | #8]** MAI 2026
+- **[AF-0.9 | #9]** INTRODUCERE
+- **[AF-0.10 | #10]** Capacitatea de deplasare reprezintă un element esențial pentru menținerea independenței funcționale, a integrării sociale și a unei calități ridicate a vieții individului. În cazul persoanelor care au suferit amputații ale membrelor inferioare, pierderea mobilității normale produce efecte semnificative atât din punct de vedere fizic, cât și psihologic. Această schimbare are o mare influență asupra activităților zilnice, nivelul de autonomie și procesul de reintegrare socială. La nivel global, numărul persoanelor care necesită soluții protetice moderne este într-o continuă creștere, principalele cauze fiind traumatismele, accidentele, afecțiunile vasculare periferice și complicațiile diabetului zaharat. Din acest motiv, dezvoltarea unor sisteme protetice performante a devenit una dintre direcțiile importante de cercetare în domeniul ingineriei medicale.
+- **[AF-0.11 | #11]** Protezele transtibiale pasive sunt cele mai utilizate variante de reabilitare datorită costurilor reduse și accesibilității ridicate. Cu toate acestea, funcționalitatea lor este limitată de imposibilitatea generării unei mișcări active la nivelul gleznei și de capacitatea redusă de adaptare la schimbările de teren sau la variațiile vitezei de mers. Studiile biomecanice arată că persoanele care utilizează proteze pasive dezvoltă frecvent un mers asimetric, asociat cu un consum energetic crescut cu aproximativ 20–30% comparativ cu mersul fiziologic. Totodată, reducerea vitezei de deplasare și suprasolicitarea membrului sănătos pot conduce, pe termen lung, la apariția durerilor articulare, a instabilității și a altor complicații musculo-scheletale [3, 4, 28].
+- **[AF-0.12 | #12]** În încercarea de a reduce aceste limitări, cercetarea modernă s-a concentrat asupra dezvoltării protezelor active și semi-active, capabile să ofere un grad mai ridicat de control și adaptabilitate. Aceste sisteme utilizează mecanisme de acționare electromecanice, senzori și microcontrolere pentru a reproduce cât mai bine biomecanica naturală a mersului uman. Prin integrarea tehnologiilor inteligente de control, protezele moderne pot identifica diferitele faze ale ciclului de mers și pot ajusta în timp real comportamentul articulației active, astfel contribuind la creșterea stabilității, confortului și eficienței în deplasare.
+- **[AF-0.13 | #13]** Evoluția senzorilor inerțiali și a sistemelor de analiză biomecanică a permis dezvoltarea unor metode avansate de monitorizare și evaluare a mersului. Sistemele bazate pe unități de măsurare inerțială (IMU), platformele de captare a mișcării și algoritmii de procesare a semnalelor permit identificarea automată a evenimentelor importante ale ciclului de mers, precum contactul inițial al călcâiului cu solul sau desprinderea piciorului în faza de balans. Aceste informații sunt esențiale pentru evaluarea performanței locomotorii și pentru dezvoltarea unor strategii eficiente de control al protezelor active. În plus, utilizarea algoritmilor de inteligență artificială și a tehnicilor de învățare automată a contribuit la creșterea preciziei sistemelor de detecție și la îmbunătățirea adaptabilității protezelor în condiții reale de utilizare [21, 38].
+- **[AF-0.14 | #14]** În prezent, proiectarea unei proteze transtibiale implică mult mai mult decât realizarea unei structuri mecanice funcționale. Dezvoltarea acestor sisteme presupune integrarea componentelor hardware și software într-o arhitectură capabilă să combine analiza biomecanică, achiziția și procesarea datelor provenite de la senzori, precum și controlul inteligent al mișcării. Utilizarea platformelor CAD pentru proiectare, a senzorilor de monitorizare și a algoritmilor avansați de analiză a mersului oferă posibilitatea realizării unor proteze mai eficiente, mai confortabile și mai apropiate de comportamentul fiziologic al membrului inferior uman.
+- **[AF-0.15 | #15]** Prezenta lucrare abordează dezvoltarea unui sistem software destinat controlului unei proteze transtibiale active și evaluării ciclului de mers. Obiectivul principal îl reprezintă îmbunătățirea funcționalității și adaptabilității sistemelor protetice moderne, prin integrarea metodelor de procesare a semnalelor și a algoritmilor de control.

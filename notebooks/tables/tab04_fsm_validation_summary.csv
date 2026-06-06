@@ -1,3 +1,3 @@
-source,n_trials,rmse_deg_mean,rmse_deg_std,rmse_deg_median,nrmse_mean,nrmse_median,pcc_mean,pcc_median,rom_omc_mean_deg,rom_pred_mean_deg
-fsm,290,13.72,4.93,13.6,0.868,0.582,-0.244,-0.224,22.9,14.6
-imu,290,8.75,5.49,7.46,0.529,0.358,0.652,0.65,22.9,25.8
+version https://git-lfs.github.com/spec/v1
+oid sha256:5c19d4b37b4b8c85286709a30e1ff3064d962ec309865faa41d01ce331d35c39
+size 257

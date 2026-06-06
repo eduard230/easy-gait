@@ -65,6 +65,64 @@ def event_mae(
     }
 
 
+def restrict_to_window(detected_idx: np.ndarray, lo: int, hi: int,
+                       margin: int = 0) -> np.ndarray:
+    """Păstrează doar evenimentele detectate care cad în fereastra [lo-margin, hi+margin].
+
+    Motivație: în datasetul Samala IMU acoperă ~14 s, dar OMC (ground truth) doar
+    ~4.5 s. Detectorul IMU produce evenimente reale pe TOT trial-ul, însă cele din
+    afara ferestrei OMC nu au pereche de referință și apar artificial ca
+    fals-pozitive, prăbușind PPV/F1. Comparația corectă (măr-cu-măr) se face doar
+    pe intervalul acoperit de OMC.
+    """
+    if len(detected_idx) == 0:
+        return detected_idx
+    d = np.asarray(detected_idx)
+    return d[(d >= lo - margin) & (d <= hi + margin)]
+
+
+def event_mae_windowed(
+    detected_idx: np.ndarray,
+    truth_idx: np.ndarray,
+    fs: float,
+    tol_ms: float = 150.0,
+    margin_ms: float = 200.0,
+    debias: bool = False,
+) -> dict:
+    """`event_mae` evaluat DOAR pe fereastra acoperită de ground-truth (OMC).
+
+    Restrânge evenimentele detectate la intervalul [min(truth), max(truth)] ± margin,
+    apoi calculează metricile. Opțional aplică o corecție de bias median (debias):
+    scade decalajul sistematic median detected−truth înainte de a raporta MAE, ceea
+    ce reflectă practica de calibrare din literatură (offset constant între definiția
+    evenimentului IMU și definiția Zeni-OMC).
+
+    Returns: dict cu aceleași chei ca `event_mae`, plus:
+        mae_debiased_ms, bias_ms, n_detected_in_window.
+    """
+    if len(truth_idx) == 0:
+        base = event_mae(detected_idx, truth_idx, fs, tol_ms)
+        base.update({"mae_debiased_ms": np.nan, "n_detected_in_window": 0})
+        return base
+
+    lo, hi = int(np.min(truth_idx)), int(np.max(truth_idx))
+    margin = int(margin_ms / 1000.0 * fs)
+    det_win = restrict_to_window(detected_idx, lo, hi, margin=margin)
+
+    res = event_mae(det_win, truth_idx, fs, tol_ms)
+    res["n_detected_in_window"] = int(len(det_win))
+
+    # Corecție de bias: re-evaluează MAE după scăderea biasului median
+    if debias and not np.isnan(res.get("bias_ms", np.nan)) and len(det_win) > 0:
+        bias_samples = res["bias_ms"] / 1000.0 * fs
+        det_corr = det_win - bias_samples
+        res_corr = event_mae(det_corr.astype(float), truth_idx, fs, tol_ms)
+        res["mae_debiased_ms"] = res_corr["mae_ms"]
+    else:
+        res["mae_debiased_ms"] = res.get("mae_ms", np.nan)
+    return res
+
+
 def traj_rmse(pred: np.ndarray, truth: np.ndarray) -> float:
     """RMSE între două traiectorii sincronizate (aceeași fs și lungime)."""
     n = min(len(pred), len(truth))

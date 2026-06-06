@@ -1,0 +1,61 @@
+{
+  "source": "Paun_Raluca_Raport_CS4-final.docx",
+  "chapters": [
+    {
+      "num": "0",
+      "title": "Front matter / Pre-capitol (titlu, rezumat, cuprins)",
+      "file": "capitol_0_front_matter_pre_capitol_titlu_rezumat_cuprins.md",
+      "statements": 15,
+      "figures": 0,
+      "tables": 0
+    },
+    {
+      "num": "1",
+      "title": "CAPITOLUL I",
+      "file": "capitol_1_capitolul_i.md",
+      "statements": 42,
+      "figures": 14,
+      "tables": 0
+    },
+    {
+      "num": "2",
+      "title": "CAPITOLUL II",
+      "file": "capitol_2_capitolul_ii.md",
+      "statements": 17,
+      "figures": 14,
+      "tables": 2
+    },
+    {
+      "num": "3",
+      "title": "CAPITOLUL III PREZENTAREA CONCEPTULUI PROPRIU",
+      "file": "capitol_3_capitolul_iii_prezentarea_conceptului_propriu.md",
+      "statements": 4,
+      "figures": 0,
+      "tables": 0
+    },
+    {
+      "num": "4",
+      "title": "CAPITOLUL IV PREZENTAREA CONCEPTULUI PROPRIU",
+      "file": "capitol_4_capitolul_iv_prezentarea_conceptului_propriu.md",
+      "statements": 102,
+      "figures": 17,
+      "tables": 3
+    },
+    {
+      "num": "5",
+      "title": "CAPITOLUL V",
+      "file": "capitol_5_capitolul_v.md",
+      "statements": 18,
+      "figures": 6,
+      "tables": 9
+    },
+    {
+      "num": "BIB",
+      "title": "BIBLIOGRAFIE",
+      "file": "capitol_BIB_bibliografie.md",
+      "statements": 60,
+      "figures": 0,
+      "tables": 0
+    }
+  ]
+}

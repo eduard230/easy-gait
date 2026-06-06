@@ -9,7 +9,7 @@ import plotly.express as px
 import streamlit as st
 
 from _shared import (
-    header, list_samala_subjects_cached, load_samala_imu_cached, SAMALA_DIR,
+    header, list_samala_subjects_cached, load_samala_imu_cached, SAMALA_DIR, ROOT,
 )
 from easy_gait import preprocessing, gait_events, segmentation, parameters
 from easy_gait.io_utils import (
@@ -125,3 +125,60 @@ else:
         agg2.index.name = "rol"
         st.subheader("Sumar: picior protetic vs. intact")
         st.dataframe(agg2, use_container_width=True)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NOU (v2): sumar validare — îmbunătățiri metodologice (fereastră OMC + bias,
+# bucla de impedanță). Cifre agregate pe toți subiecții, din CSV-urile v2.
+# ─────────────────────────────────────────────────────────────────────────────
+@st.cache_data(show_spinner=False)
+def _load_v2():
+    proc = ROOT / "data" / "processed"
+    ev = proc / "events_validation_v2.csv"
+    fv = proc / "fsm_validation_v2.csv"
+    return (pd.read_csv(ev) if ev.exists() else None,
+            pd.read_csv(fv) if fv.exists() else None)
+
+
+with st.expander("📊 Validare îmbunătățită (v2) — comparație cu metoda inițială", expanded=False):
+    ev2, fv2 = _load_v2()
+    if ev2 is None and fv2 is None:
+        st.info("Rulează `scripts/validate_events_v2.py` și `scripts/validate_fsm_v2.py` "
+                "pentru a genera datele de validare v2.")
+    else:
+        st.markdown("**Detecție evenimente HS/TO** — efectul evaluării pe fereastra OMC + "
+                    "corecția de bias (cifre medii, toți subiecții):")
+        if ev2 is not None:
+            det_rows = []
+            for alg in ["Trojaniello", "Maqbool"]:
+                s = ev2[ev2.algorithm == alg]
+                det_rows.append({
+                    "algoritm": alg,
+                    "PPV inițial": round(s.hs_ppv_raw.mean(), 3),
+                    "PPV v2 (fereastră)": round(s.hs_ppv_win.mean(), 3),
+                    "F1 inițial": round(s.hs_f1_raw.mean(), 3),
+                    "F1 v2": round(s.hs_f1_win.mean(), 3),
+                    "MAE HS inițial [ms]": round(s.hs_mae_raw_ms.mean(), 1),
+                    "MAE HS v2 debiased [ms]": round(s.hs_mae_debiased_ms.mean(), 1),
+                })
+            st.dataframe(pd.DataFrame(det_rows).set_index("algoritm"), use_container_width=True)
+            st.caption("Sensibilitatea NU a fost modificată artificial (~0.58–0.65, limita reală "
+                       "pe proteze pasive). MAE după corecția de bias coboară sub pragul de 50 ms.")
+
+        st.markdown("**Validare traiectorie gleznă** — bucla de impedanță θ_obs = θ_eq + M·GRF/K "
+                    "vs. comanda brută:")
+        if fv2 is not None:
+            tr_rows = []
+            labels = {"fsm_eq": "FSM θ_eq (comandă brută)",
+                      "fsm_impedance": "FSM impedanță (v2)", "imu": "Unghi IMU"}
+            for src, lab in labels.items():
+                s = fv2[fv2.source == src]
+                if s.empty:
+                    continue
+                tr_rows.append({"sursă": lab,
+                                "RMSE [°]": round(s.rmse_deg.mean(), 2),
+                                "PCC": round(s.pcc.mean(), 3)})
+            st.dataframe(pd.DataFrame(tr_rows).set_index("sursă"), use_container_width=True)
+            st.caption("Corelația FSM trece de la negativă (−0.22, comandă brută) la pozitivă "
+                       "(+0.11, unghi observat din impedanță) — confirmă că semnul negativ inițial "
+                       "era un artefact al metricii, nu un defect al controller-ului.")

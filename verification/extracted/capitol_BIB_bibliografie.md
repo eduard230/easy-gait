@@ -1,0 +1,64 @@
+# BIBLIOGRAFIE
+
+> Capitol extras automat din `Paun_Raluca_Raport_CS4-final.docx`. Fiecare AFIRMATIE este numerotata pentru verificare independenta.
+
+- **[AF-BIB.1 | #199]** [1]- Windrich, M., Grimmer, M., Christ, O., Rinderknecht, S., & Beckerle, P. (2016), Active lower limb prosthetics: a systematic review of design issues and solutions, BioMedical Engineering OnLine, 15(S3).
+- **[AF-BIB.2 | #200]** [2]- Guerra-Farfán, E., Nuñez, J.H., Sanchez-Raya, J. et al., Prosthetic Limb Options for Below and Above Knee Amputations: Making the Correct Choice for the Right Patient, Curr Trauma Rep 4, 247–255 (2018).
+- **[AF-BIB.3 | #201]** [3]- A. R. Ismawan, T. Prahasto, M. Ariyanto, B. Setiyana, and R. Novriansyah, A Review of Existing Transtibial Bionic Prosthesis: Mechanical Design, Actuators and Power Transmission, Journal of Biomedical Science and Bioengineering, vol. 1, no. 2, pp. 65-72, Jan. 2022.
+- **[AF-BIB.4 | #202]** [4]- Waters, R L et al, “Energy cost of walking of amputees: the influence of level of
+- **[AF-BIB.5 | #203]** amputation.”, The Journal of bone and joint surgery. American volume vol. 58,1 (1976): 42-6.
+- **[AF-BIB.6 | #204]** [5]- Baojun Chen, & Qining Wang. (2015), Combining human volitional control with intrinsic controller on robotic prosthesis: A case study on adaptive slope walking, 2015, 37th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC).
+- **[AF-BIB.7 | #205]** [6]- Huang, S., Wensman, J. P., & Ferris, D. P. (2014), An Experimental Powered Lower Limb Prosthesis Using Proportional Myoelectric Control, Journal of Medical Devices, 8(2), 024501.
+- **[AF-BIB.8 | #206]** [7]- https://www.kunc.org/health/2013-05-03/technology-for-life-hydraulic-foot-prosthetic-makes-walking-easier
+- **[AF-BIB.9 | #207]** [8]-H. L. Bartlett, S. T. King, M. Goldfarb and B. E. Lawson, "A Semi-Powered Ankle Prosthesis and Unified Controller for Level and Sloped Walking," in IEEE Transactions on Neural Systems and Rehabilitation Engineering, vol. 29, pp. 320-329, 2021.
+- **[AF-BIB.10 | #208]** [9]-Bartlett, H. L., Lawson, B., & Goldfarb, M. (2019), Design, Control, and Preliminary Assessment of a Multifunctional Semi-Powered Ankle Prosthesis, IEEE/ASME Transactions on Mechatronics, 1–1.
+- **[AF-BIB.11 | #209]** [10]-https://springactive.com/#rowResearch
+- **[AF-BIB.12 | #210]** [11]-https://www.anchorot.com/biom-personal-bionics/
+- **[AF-BIB.13 | #211]** [12]-F. Gao, Y. Liu and W. -H. Liao, "A new powered ankle-foot prosthesis with compact parallel spring mechanism," 2016 IEEE International Conference on Robotics and Biomimetics (ROBIO), Qingdao, China, 2016, pp. 473-478.
+- **[AF-BIB.14 | #212]** [13]-https://us.proteor.com/ankles/kinnex-2-0/#flush-heading-block_61de79641d3b7-1
+- **[AF-BIB.15 | #213]** [14]-Ingraham, K. A., Choi, H., Gardinier, E. S., Remy, C. D., & Gates, D. H. (2018), „Choosing appropriate prosthetic ankle work to reduce the metabolic cost of individuals with transtibial
+- **[AF-BIB.16 | #214]** amputation.” , Scientific Reports, 8(1).
+- **[AF-BIB.17 | #215]** [15]-https://now.aapmr.org/lower-limb-prosthetics/ [16]-https://www.prosthetic.com.sg/resources
+- **[AF-BIB.18 | #216]** [17]-https://www.mwrf.com/technologies/components/active-components/article/21845903/healing-heroes-one-wireless-limb-at-a-time
+- **[AF-BIB.19 | #217]** [18]-Afiqah Hamzah N, Razak NAA, Sayuti Ab Karim M, Gholizadeh H. „A review of history of CAD/CAM system application in the production of transtibial prosthetic socket in developing countries (from 1980 to 2019).”, Proceedings of the Institution of Mechanical Engineers, Part H: Journal of Engineering in Medicine. 2021;235(12):1359-1374.
+- **[AF-BIB.20 | #218]** [19]-Sundararaj, S., & Subramaniyan, G. V. (2021),„Structural design and economic analysis of prosthetic leg for below and above knee amputation.” Materials Today: Proceedings, 37, 3450–3460.
+- **[AF-BIB.21 | #219]** [20]- Rattanasak, A.; Uthansakul, P.; Uthansakul, M.; Jumphoo, T.; Phapatanaburi, K.; Sindhupakorn, B.; Rooppakhun, S. Real-Time Gait Phase Detection Using Wearable Sensors for Transtibial Prosthesis Based on a kNN Algorithm. Sensors 2022, 22, 4242. https://doi.org/ 10.3390/s22114242
+- **[AF-BIB.22 | #220]** [21]- Rachel Gehlhar, Maegan Tucker, Aaron J. Young, Aaron D. Ames, A review of current state-of-the-art control methods for lower-limb powered prostheses, Annual Reviews in Control, Volume 55, 2023, Pages 142-164, ISSN 1367-5788,
+- **[AF-BIB.23 | #221]** https://doi.org/10.1016/j.arcontrol.2023.03.003.
+- **[AF-BIB.24 | #222]** [22]- A. Mazumder, E. E. G. Hekman and R. Carloni, "Toward Controlling Transtibial Prostheses Using a Single Degree of Freedom Inertial Sensor System," in IEEE Access, vol. 12,
+- **[AF-BIB.25 | #223]** pp. 24803-24812, 2024, doi: 10.1109/ACCESS.2024.3364498.
+- **[AF-BIB.26 | #224]** [23]- de la Cruz-Alejo, J., Lobato-Cadena, J.A., Arce-Vázquez, M.B. et al. Predicting triplanar and bidirectional movements for a transtibial prosthesis for rehabilitation using intelligent neural networks. Neural Comput & Applic 36, 6085–6098 (2024). https://doi.org/10.1007/s00521-023-09393-0\
+- **[AF-BIB.27 | #225]** [24]-Redfield MT, Cagle JC, Hafner BJ, Sanders JE., Classifying prosthetic use via accelerometry in persons with transtibial amputations, J Rehabil Res Dev. 2013;50(9):1201-12.
+- **[AF-BIB.28 | #226]** [25]-https://ardushop.ro/ro/electronica/902-mpu6500-modul-accelerometru-i-giroscop.html [26]-https://grabcad.com/library/towerpro-mg90s-micro-servo-1
+- **[AF-BIB.29 | #227]** [27] Sanderson D.J., Martin P.E. (1997). Lower extremity kinematic and kinetic adaptations in unilateral below-knee amputees during walking. Gait & Posture, 6(2), 126-136.
+- **[AF-BIB.30 | #228]** [28] Schmalz T., Bellmann M., Proebsting E., Blumentritt S. (2014). Gait characteristics of transtibial amputees on level ground in a cohort of 53 amputees — Comparison of kinetics and kinematics with non-amputees. Canadian Prosthetics & Orthotics Journal.
+- **[AF-BIB.31 | #229]** [29] Hsu M.J., Nielsen D.H., Lin-Chan S.J., Shurr D. (2006). The effects of prosthetic foot design on physiologic measurements, self-selected walking velocity, and physical activity in people with transtibial amputation. Archives of Physical Medicine and Rehabilitation, 87(1), 123-129.
+- **[AF-BIB.32 | #230]** [30] Norvell D.C., Czerniecki J.M., Reiber G.E., Maynard C., Pecoraro J.A., Weiss N.S. (2005). The prevalence of knee pain and symptomatic knee osteoarthritis among veteran traumatic amputees and nonamputees. Archives of Physical Medicine and Rehabilitation, 86(3), 487-493.
+- **[AF-BIB.33 | #231]** [31] Samala M., Rattanakoch J., Guerra G., Tharawadeepimuk K., Nanbancha A., Niamsang W., Kerdsomnuek P., Suwanmana S., Limroongreungrat W. (2024). A dataset of optical camera and IMU sensor derived kinematics of thirty transtibial prosthesis wearers. Scientific Data, 11:922. https://doi.org/10.1038/s41597-024-03677-3
+- **[AF-BIB.34 | #232]** [32] Guerra G., Samala M., Rattanakoch J., et al. (2023). Validity and Reliability of Inertial Measurement Unit (IMU)-Derived 3D Joint Kinematics in Persons Wearing Transtibial Prosthesis. Sensors, 23(3), 1738. https://doi.org/10.3390/s23031738
+- **[AF-BIB.35 | #233]** [33] Zeni J.A. Jr., Richards J.G., Higginson J.S. (2008). Two simple methods for determining gait events during treadmill and overground walking using kinematic data. Gait & Posture, 27(4), 710-714.
+- **[AF-BIB.36 | #234]** [34] Bonci T., Salis F., Scott K. et al. (2022). An algorithm for accurate marker-based gait event detection in healthy and pathological populations during complex motions. Frontiers in Bioengineering and Biotechnology, 10:868928.
+- **[AF-BIB.37 | #235]** [35] Bruening D.A., Ridge S.T. (2014). Automated event detection algorithms in pathological gait. Gait & Posture, 39(1), 472-477.
+- **[AF-BIB.38 | #236]** [36] Lempereur M., Rousseau F., Remy-Neris O. et al. (2020). A new deep learning-based method for the detection of gait events in children with gait disorders: Proof-of-concept and concurrent validity. Journal of Biomechanics, 98, 109490.
+- **[AF-BIB.39 | #237]** [37] Iosa M., Picerno P., Paolucci S., Morone G. (2016). Wearable inertial sensors for human movement analysis. Expert Review of Medical Devices, 13(7), 641-659.
+- **[AF-BIB.40 | #238]** [38] Maqbool H.F., Husman M.A.B., Awad M.I., Abouhossein A., Iqbal N., Dehghani-Sanij A.A. (2017). A real-time gait event detection for lower limb prosthesis control and evaluation. IEEE Transactions on Neural Systems and Rehabilitation Engineering, 25(9), 1500-1509.
+- **[AF-BIB.41 | #239]** [39] Hua R., Wang Y. (2018). A customized convolutional neural network model integrated with acceleration-based smart insole for the prediction of lower limb pathology by gait analysis. IEEE Sensors Journal, 18(20), 8484-8492.
+- **[AF-BIB.42 | #240]** [40] Wassall M. (2025). IMU dataset of lower limb prosthetic users traversing real-world terrain with and without a walking aid. DataverseNO. DOI: 10.18710/U8RGDL
+- **[AF-BIB.43 | #241]** [41] Mariani B., Jiménez M.C., Vingerhoets F.J., Aminian K. (2010). On-shoe wearable sensors for gait and turning assessment of patients with Parkinson’s disease. IEEE Transactions on Biomedical Engineering, 57(11), 2819-2826.
+- **[AF-BIB.44 | #242]** [42] Skvortsov A., Sukhov D., Kuznetsov A. et al. (2023). Heel-Strike and Toe-Off Detection Algorithm Based on Deep Neural Networks Using Shank-Worn Inertial Sensors for Clinical Purpose. Journal of Sensors, 2023, 7538611. https://doi.org/10.1155/2023/7538611
+- **[AF-BIB.45 | #243]** [43] Trojaniello D., Cereatti A., Della Croce U. (2014). Accuracy, sensitivity and robustness of five different methods for the estimation of gait temporal parameters using a single inertial sensor mounted on the lower trunk. Gait & Posture, 40(4), 487-492.
+- **[AF-BIB.46 | #244]** [44] Pacini Panebianco G., Bisi M.C., Stagni R., Fantozzi S. (2018). Analysis of the performance of 17 algorithms from a systematic review: Influence of sensor position, analysed variable and computational approach in gait timing estimation from IMU measurements. Gait & Posture, 66, 76-82.
+- **[AF-BIB.47 | #245]** [45] Redfield MT, Cagle JC, Hafner BJ, Sanders JE., Classifying prosthetic use via accelerometry in persons with transtibial amputations, J Rehabil Res Dev. 2013;50(9):1201-12.
+- **[AF-BIB.48 | #246]** [46] https://ardushop.ro/ro/electronica/902-mpu6500-modul-accelerometru-i-giroscop.html [47] https://grabcad.com/library/towerpro-mg90s-micro-servo-1
+- **[AF-BIB.49 | #247]** [48] Salarian, A., Russmann, H., Vingerhoets, F. J., Burkhard, P. R., & Aminian, K. (2004). Gaitassessment in Parkinson’s disease: Toward an ambulatory system for long-term monitoring. IEEE Transactions on Biomedical Engineering, 51(8), 1434–1443. https://doi.org/10.1109/TBME.2004.827933
+- **[AF-BIB.50 | #248]** [49] Mariani, B., Jiménez, M. C., Vingerhoets, F. J., & Aminian, K. (2010). On-shoe wearable
+- **[AF-BIB.51 | #249]** sensors for gait and turning assessment of patients with Parkinson’s disease. IEEE Transactions on Biomedical Engineering, 57(11), 2819–2826. https://doi.org/10.1109/TBME.2010.2055043
+- **[AF-BIB.52 | #250]** [50] Picerno, P., Cereatti, A., & Cappozzo, A. (2011). A novel method for gait event detection based on foot-mounted gyroscopes. Journal of Biomechanics, 44(4), 789–792. https://doi.org/10.1016/j.jbiomech.2010.12.014
+- **[AF-BIB.53 | #251]** [51] Figueiredo, M., Santos, A., & Silva, E. (2018). IMU-based gait analysis: A review of methods and applications. Sensors, 18(3), 722. https://doi.org/10.3390/s18030722
+- **[AF-BIB.54 | #252]** [52] Choi, A., Jung, K., & Park, K. (2017). Step detection and gait analysis using wearable IMU sensors for elderly monitoring. Journal of Medical Systems, 41(7), 104. https://doi.org/10.1007/s10916-017-0751-7
+- **[AF-BIB.55 | #253]** [53] Salarian, A., et al. (2013). Algorithms for gait event detection and temporal parameters using foot IMU sensors. Gait & Posture, 38(4), 923–928. https://doi.org/10.1016/j.gaitpost.2013.03.027
+- **[AF-BIB.56 | #254]** [54]  https://figshare.com/articles/dataset/_b_A_dataset_of_optical_camera_and_IMU_sensor_derived
+- **[AF-BIB.57 | #255]** _kinematics_of_thirty_transtibial_prosthesis_wearers_b_/25698006?file=47707666
+- **[AF-BIB.58 | #256]** [55] Samala M, Rattanakoch J, Guerra G, Tharawadeepimuk K, Nanbancha A, Niamsang W, Kerdsomnuek P, Suwanmana S, Limroongreungrat W. A dataset of optical camera and IMU sensor derived kinematics of thirty transtibial prosthesis wearers. Sci Data. 2024 Aug 24;11(1):922. doi: 10.1038/s41597-024-03677-3. PMID: 39181912; PMCID: PMC11344789.
+- **[AF-BIB.59 | #257]** [56] https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/U8RGDL
+- **[AF-BIB.60 | #258]** [57] https://www.nature.com/articles/s41597-020-0481-z
