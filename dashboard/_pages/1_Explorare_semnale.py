@@ -20,8 +20,8 @@ from easy_gait.io_utils import (
 
 header("Explorare semnale")
 st.caption(
-    "Semnalele IMU brute și după filtrare pentru o probă aleasă: viteza unghiulară a "
-    "gambei, accelerațiile și unghiul de gleznă."
+    "Semnalele IMU brute și după filtrare pentru o probă de mers aleasă: viteza unghiulară a "
+    "gambei, accelerațiile și unghiul gleznei."
 )
 
 dataset = st.radio("Set de date", ["Samala 2024", "Wassall 2025"], horizontal=True, index=0)

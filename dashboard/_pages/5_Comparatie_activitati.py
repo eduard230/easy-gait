@@ -46,19 +46,20 @@ def process_wassall_trial(path: str) -> dict | None:
         "FL": "plat", "ST": "scări", "SL": "pantă",
         "GR": "iarbă", "GV": "pietriș", "UN": "denivelat",
     }
+    walkaid_map = {"wi": "cu sprijin", "wo": "fără sprijin", "w0": "fără sprijin"}
     d.update({
         "participant": meta["path"].split("\\")[-2].split("/")[-1],
         "trial_id": Path(meta["path"]).stem,
         "terrain": terrain_map.get(terrain_code, terrain_code),
-        "walkaid": meta["walkaid"],
+        "walkaid": walkaid_map.get(meta["walkaid"], meta["walkaid"]),
     })
     return d
 
 
 LBL = {
-    "terrain": "Teren", "walkaid": "Mijloc de sprijin",
+    "terrain": "Teren", "walkaid": "Condiție mers",
     "cadence [steps/min]": "Cadență (pași/min)",
-    "stance mean [%]": "Sprijin (%)",
+    "stance mean [%]": "Procentajul fazei de sprijin (%)",
     "stride mean [s]": "Durată pas (s)",
 }
 
@@ -87,7 +88,7 @@ if mode == "Un participant":
     st.plotly_chart(fig, use_container_width=True)
 
     fig2 = px.box(df_res, x="terrain", y="stance mean [%]", color="walkaid",
-                   title="Procent de sprijin pe teren", labels=LBL)
+                   title="Procentajul fazei de sprijin pe teren", labels=LBL)
     st.plotly_chart(fig2, use_container_width=True)
 
     fig3 = px.box(df_res, x="terrain", y="stride mean [s]", color="walkaid",
@@ -109,18 +110,14 @@ else:
     st.dataframe(df_all, use_container_width=True)
 
     if not df_all.empty:
-        # Sumar per teren
-        agg = df_all.groupby("terrain").agg(**{
-            "probe": ("cadence [steps/min]", "count"),
-            "cadență medie (pași/min)": ("cadence [steps/min]", "mean"),
-            "durată pas medie (s)": ("stride mean [s]", "mean"),
-            "sprijin mediu (%)": ("stance mean [%]", "mean"),
-            "sprijin abatere (%)": ("stance mean [%]", "std"),
-        }).round(2)
-        agg.index.name = "teren"
-        st.subheader("Sumar pe teren (peste toți participanții)")
-        st.dataframe(agg, use_container_width=True)
-
         fig = px.box(df_all, x="terrain", y="cadence [steps/min]", color="walkaid",
-                      title="Cadență pe teren — lot complet", labels=LBL)
+                      title="Cadență pe tip de teren", labels=LBL)
         st.plotly_chart(fig, use_container_width=True)
+
+        fig2 = px.box(df_all, x="terrain", y="stance mean [%]", color="walkaid",
+                       title="Procentajul fazei de sprijin pe tip de teren", labels=LBL)
+        st.plotly_chart(fig2, use_container_width=True)
+
+        fig3 = px.box(df_all, x="terrain", y="stride mean [s]", color="walkaid",
+                       title="Durata pasului pe tip de teren", labels=LBL)
+        st.plotly_chart(fig3, use_container_width=True)

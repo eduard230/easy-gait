@@ -18,8 +18,8 @@ from easy_gait.io_utils import (
 
 header("Detecție evenimente")
 st.caption(
-    "Momentele de contact (HS) și de desprindere (TO) ale piciorului, identificate din "
-    "viteza unghiulară a gambei, și ciclurile de mers rezultate."
+    "Momentele de contact (HS - Heel Strike) și de desprindere (TO - Toe Off) ale piciorului, "
+    "identificate din viteza unghiulară a gambei, și ciclurile de mers rezultate."
 )
 
 subjects = list_samala_subjects_cached()
@@ -51,19 +51,21 @@ else:
     events = gait_events.detect_events_maqbool(omega, amag, fs=fs, prosthetic=is_prost)
 
 c1, c2, c3 = st.columns(3)
-c1.metric("Contacte detectate", len(events.hs_idx))
-c2.metric("Desprinderi detectate", len(events.to_idx))
+c1.metric("Contacte detectate (HS)", len(events.hs_idx))
+c2.metric("Desprinderi detectate (TO)", len(events.to_idx))
 cycles = segmentation.reject_outliers(segmentation.build_cycles(events))
-c3.metric("Cicluri valide", len(cycles))
+c3.metric("Cicluri (succesiuni HS-TO)", len(cycles))
 
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=t, y=omega, name="viteză unghiulară gambă", line=dict(color="steelblue")))
 fig.add_trace(go.Scatter(
-    x=events.hs_t, y=omega[events.hs_idx], mode="markers", name="contact (călcâi)",
+    x=events.hs_t, y=omega[events.hs_idx], mode="markers",
+    name="Contact (HS)",
     marker=dict(color="red", size=12, symbol="circle"),
 ))
 fig.add_trace(go.Scatter(
-    x=events.to_t, y=omega[events.to_idx], mode="markers", name="desprindere (vârf)",
+    x=events.to_t, y=omega[events.to_idx], mode="markers",
+    name="Desprindere (TO)",
     marker=dict(color="blue", size=12, symbol="diamond"),
 ))
 fig.update_layout(

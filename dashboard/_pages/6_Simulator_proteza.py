@@ -19,10 +19,6 @@ from easy_gait.io_utils import (
 from easy_gait.prosthesis_viz import build_animation_figure, build_legend_figure, FSM_COLORS
 
 header("Simulator proteză")
-st.caption(
-    "Animație laterală a protezei care urmează unghiul de gleznă comandat de control. "
-    "Culoarea tălpii arată faza curentă a pasului. Pornește cu Play sau derulează manual."
-)
 
 # Controale
 c1, c2, c3, c4 = st.columns(4)
@@ -154,18 +150,15 @@ with right:
 st.divider()
 st.markdown(
     """
-    **Repere în desen.** Pilonul vertical este gamba,
-    cercul alb de la bază este glezna, iar poligonul colorat este talpa; cercul gri de
-    sus marchează genunchiul. Glezna se ridică sau coboară astfel încât talpa să rămână
-    pe sol pe tot parcursul sprijinului.
+    **Repere în desen.** Pilonul vertical este gamba, cercul alb de la bază este glezna,
+    iar dreptunghiul colorat este talpa; cercul gri de sus marchează genunchiul.
 
-    **Fazele pasului**, în ordinea în care apar (culoarea tălpii urmează aceeași codare
-    ca în grafic):
+    **Fazele mersului**, în ordinea în care apar (culoarea tălpii urmează aceeași codare ca în legendă):
 
-    - **Contact inițial** — călcâiul atinge solul, gamba începe să se rotească peste el.
-    - **Sprijin median** — talpa e plată, greutatea trece peste gleznă, gamba înclină înainte.
-    - **Desprindere** — călcâiul se ridică, glezna împinge din vârf înainte de a părăsi solul.
-    - **Început de balans** — piciorul s-a desprins și se ridică pentru a evita atingerea solului.
-    - **Sfârșit de balans** — gamba se duce înainte, vârful coboară spre următorul contact.
+    - **Contactul inițial** — călcâiul atinge solul, gamba începe să se rotească peste el.
+    - **Sprijin median** — talpa e plată, greutatea trece peste gleznă, gamba se înclină înainte.
+    - **Desprindere** — călcâiul se ridică, vârful se împinge înainte de a părăsi solul.
+    - **Începutul fazei de balans** — piciorul s-a desprins și se ridică.
+    - **Sfârșitul fazei de balans** — gamba se duce înainte, vârful coboară pentru următorul contact.
     """
 )

@@ -13,8 +13,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-DASHBOARD = Path(__file__).parent
-PAGES_DIR = DASHBOARD / "pages"
+DASHBOARD = Path(__file__).resolve().parent
+PAGES_DIR = DASHBOARD / "_pages"
 
 
 def home():
@@ -31,9 +31,9 @@ def home():
         st.subheader("Seturi de date")
         st.markdown(
             """
-            - **Samala 2024** — 30 purtători de proteză transtibială, IMU la 200 Hz și
-              motion capture sincronizat, cinci probe de mers pe plat.
-            - **Wassall 2025** — 20 de participanți, IMU la 100 Hz pe teren variat:
+            - **Samala 2024** — 30 purtători de proteză transtibială, IMU la frecventa de 200 Hz și
+              motion capture sincronizat, cinci probe de mers pe o suprafata plata.
+            - **Wassall 2025** — 20 de participanți, IMU la frecventa de 100 Hz pe teren variat:
               plat, scări, pante, iarbă, pietriș, suprafață denivelată.
             """
         )
@@ -43,8 +43,8 @@ def home():
         st.markdown(
             """
             - **Evenimente HS/TO** — Trojaniello (offline) și Maqbool (timp real).
-            - **Control gleznă** — automat cu 5 stări (FSM), cu praguri din literatură.
-            - **Validare** — eroare și corelație față de unghiul măsurat optic.
+            - **Control gleznă** — automat cu 5 stări (FSM).
+            - **Validare** — eroare și corelație față de unghiul măsurat (OMC).
             """
         )
 
@@ -53,12 +53,12 @@ def home():
     st.subheader("Pagini")
     st.markdown(
         """
-        - **Explorare semnale** — semnalele brute și filtrate pentru o probă.
+        - **Explorare semnale** — semnalele brute și filtrate pentru o probă de mers.
         - **Detecție evenimente** — contactul și desprinderea piciorului, ciclurile rezultate.
-        - **Parametri temporali** — cadență, durată de pas, procent de sprijin pe subiect.
+        - **Parametri temporali** — cadență, durata pasului, procentajul fazei de sprijin per subiect.
         - **Simulator FSM** — unghiul de gleznă comandat față de cel real.
-        - **Comparație activități** — diferențele între tipuri de teren (Wassall).
-        - **Simulator proteză** — animație a protezei sincronizată cu controlul.
+        - **Comparație activități** — diferențele între tipuri de teren.
+        - **Simulator proteză** — animație a protezei.
         """
     )
 

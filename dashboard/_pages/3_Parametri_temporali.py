@@ -19,8 +19,9 @@ from easy_gait.io_utils import (
 
 header("Parametri temporali")
 st.caption(
-    "Cadență, durată de pas și procent de sprijin, calculate pe cele cinci probe ale "
-    "unui subiect sau pe întregul lot, separat pentru piciorul intact și cel protetic."
+    "Cadență, durată pasului și procentajul fazei de sprijin, calculate pe cele cinci probe "
+    "de mers efectuate de un subiect sau de către întregul grup de subiecți, separat pentru "
+    "piciorul intact și cel protetic."
 )
 
 mode = st.radio("Mod", ["Un subiect", "Toți subiecții"], horizontal=True)
@@ -33,7 +34,7 @@ COL_RO = {
     "role": "rol",
     "n_cycles": "cicluri",
     "cadence [steps/min]": "cadență [pași/min]",
-    "stride mean [s]": "durată pas medie [s]",
+    "stride mean [s]": "durată medie pas [s]",
     "stride std [s]": "durată pas abatere [s]",
     "stride CV [%]": "variabilitate pas [%]",
     "stance mean [%]": "sprijin mediu [%]",
@@ -116,69 +117,65 @@ else:
                       labels={"subject": "Subiect", "cadence [steps/min]": "Cadență (pași/min)", "role": "Picior"})
         st.plotly_chart(fig, use_container_width=True)
 
+        agg_stance = df_all.groupby(["subject", "role"])["stance mean [%]"].mean().reset_index()
+        fig2 = px.bar(agg_stance, x="subject", y="stance mean [%]", color="role", barmode="group",
+                       title="Procentajul fazei de sprijin per subiect",
+                       labels={"subject": "Subiect", "stance mean [%]": "Fază de sprijin (%)", "role": "Picior"})
+        st.plotly_chart(fig2, use_container_width=True)
+
         agg2 = df_all.groupby("role").agg(**{
             "cadență [pași/min]": ("cadence [steps/min]", "mean"),
             "durată pas medie [s]": ("stride mean [s]", "mean"),
             "sprijin mediu [%]": ("stance mean [%]", "mean"),
             "balans mediu [%]": ("swing mean [%]", "mean"),
         }).round(2)
-        agg2.index.name = "rol"
-        st.subheader("Sumar: picior protetic vs. intact")
+        agg2.index.name = "tip"
+        st.subheader("Proteză vs. picior intact")
         st.dataframe(agg2, use_container_width=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# NOU (v2): sumar validare — îmbunătățiri metodologice (fereastră OMC + bias,
-# bucla de impedanță). Cifre agregate pe toți subiecții, din CSV-urile v2.
+# VALIDARE v2 — păstrat pentru proiect, dezactivat din dashboard.
+# Pentru a reactiva: decomentează blocul de mai jos.
 # ─────────────────────────────────────────────────────────────────────────────
-@st.cache_data(show_spinner=False)
-def _load_v2():
-    proc = ROOT / "data" / "processed"
-    ev = proc / "events_validation_v2.csv"
-    fv = proc / "fsm_validation_v2.csv"
-    return (pd.read_csv(ev) if ev.exists() else None,
-            pd.read_csv(fv) if fv.exists() else None)
-
-
-with st.expander("📊 Validare îmbunătățită (v2) — comparație cu metoda inițială", expanded=False):
-    ev2, fv2 = _load_v2()
-    if ev2 is None and fv2 is None:
-        st.info("Rulează `scripts/validate_events_v2.py` și `scripts/validate_fsm_v2.py` "
-                "pentru a genera datele de validare v2.")
-    else:
-        st.markdown("**Detecție evenimente HS/TO** — efectul evaluării pe fereastra OMC + "
-                    "corecția de bias (cifre medii, toți subiecții):")
-        if ev2 is not None:
-            det_rows = []
-            for alg in ["Trojaniello", "Maqbool"]:
-                s = ev2[ev2.algorithm == alg]
-                det_rows.append({
-                    "algoritm": alg,
-                    "PPV inițial": round(s.hs_ppv_raw.mean(), 3),
-                    "PPV v2 (fereastră)": round(s.hs_ppv_win.mean(), 3),
-                    "F1 inițial": round(s.hs_f1_raw.mean(), 3),
-                    "F1 v2": round(s.hs_f1_win.mean(), 3),
-                    "MAE HS inițial [ms]": round(s.hs_mae_raw_ms.mean(), 1),
-                    "MAE HS v2 debiased [ms]": round(s.hs_mae_debiased_ms.mean(), 1),
-                })
-            st.dataframe(pd.DataFrame(det_rows).set_index("algoritm"), use_container_width=True)
-            st.caption("Sensibilitatea NU a fost modificată artificial (~0.58–0.65, limita reală "
-                       "pe proteze pasive). MAE după corecția de bias coboară sub pragul de 50 ms.")
-
-        st.markdown("**Validare traiectorie gleznă** — bucla de impedanță θ_obs = θ_eq + M·GRF/K "
-                    "vs. comanda brută:")
-        if fv2 is not None:
-            tr_rows = []
-            labels = {"fsm_eq": "FSM θ_eq (comandă brută)",
-                      "fsm_impedance": "FSM impedanță (v2)", "imu": "Unghi IMU"}
-            for src, lab in labels.items():
-                s = fv2[fv2.source == src]
-                if s.empty:
-                    continue
-                tr_rows.append({"sursă": lab,
-                                "RMSE [°]": round(s.rmse_deg.mean(), 2),
-                                "PCC": round(s.pcc.mean(), 3)})
-            st.dataframe(pd.DataFrame(tr_rows).set_index("sursă"), use_container_width=True)
-            st.caption("Corelația FSM trece de la negativă (−0.22, comandă brută) la pozitivă "
-                       "(+0.11, unghi observat din impedanță) — confirmă că semnul negativ inițial "
-                       "era un artefact al metricii, nu un defect al controller-ului.")
+# @st.cache_data(show_spinner=False)
+# def _load_v2():
+#     proc = ROOT / "data" / "processed"
+#     ev = proc / "events_validation_v2.csv"
+#     fv = proc / "fsm_validation_v2.csv"
+#     def _read(path, required_col):
+#         if not path.exists():
+#             return None
+#         df = pd.read_csv(path)
+#         return df if required_col in df.columns else None
+#     return (_read(ev, "algorithm"), _read(fv, "algorithm"))
+#
+# with st.expander("📊 Validare îmbunătățită (v2) — comparație cu metoda inițială", expanded=False):
+#     ev2, fv2 = _load_v2()
+#     if ev2 is None and fv2 is None:
+#         st.info("Rulează scripts/validate_events_v2.py și scripts/validate_fsm_v2.py.")
+#     else:
+#         if ev2 is not None:
+#             det_rows = []
+#             for alg in ["Trojaniello", "Maqbool"]:
+#                 s = ev2[ev2.algorithm == alg]
+#                 det_rows.append({
+#                     "algoritm": alg,
+#                     "PPV inițial": round(s.hs_ppv_raw.mean(), 3),
+#                     "PPV v2 (fereastră)": round(s.hs_ppv_win.mean(), 3),
+#                     "F1 inițial": round(s.hs_f1_raw.mean(), 3),
+#                     "F1 v2": round(s.hs_f1_win.mean(), 3),
+#                     "MAE HS inițial [ms]": round(s.hs_mae_raw_ms.mean(), 1),
+#                     "MAE HS v2 debiased [ms]": round(s.hs_mae_debiased_ms.mean(), 1),
+#                 })
+#             st.dataframe(pd.DataFrame(det_rows).set_index("algoritm"), use_container_width=True)
+#         if fv2 is not None:
+#             tr_rows = []
+#             for src, lab in {"fsm_eq": "FSM θ_eq", "fsm_impedance": "FSM impedanță", "imu": "IMU"}.items():
+#                 s = fv2[fv2.source == src]
+#                 if not s.empty:
+#                     tr_rows.append({"sursă": lab, "RMSE [°]": round(s.rmse_deg.mean(), 2), "PCC": round(s.pcc.mean(), 3)})
+#             st.dataframe(pd.DataFrame(tr_rows).set_index("sursă"), use_container_width=True)
+#             st.caption("Corelația FSM trece de la negativă (−0.22, comandă brută) la pozitivă "
+#                        "(+0.11, unghi observat din impedanță) — confirmă că semnul negativ inițial "
+#                        "era un artefact al metricii, nu un defect al controller-ului.")

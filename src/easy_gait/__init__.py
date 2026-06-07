@@ -12,6 +12,7 @@ from easy_gait import (
     ankle_controller,
     validation,
     prosthesis_viz,
+    gait_profile,
 )
 
 __all__ = [
@@ -24,4 +25,5 @@ __all__ = [
     "ankle_controller",
     "validation",
     "prosthesis_viz",
+    "gait_profile",
 ]
